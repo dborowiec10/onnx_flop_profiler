@@ -7,7 +7,7 @@ def parse_initializer(line):
     left = line[:open_idx].strip()
     _type = None
     subtype = None
-    tl_split = left.split("/")
+    tl_split = left.rsplit("/", 1)
     if len(tl_split) > 1:
         name = tl_split[0]
         _type = tl_split[1]
@@ -26,13 +26,26 @@ def parse_initializer(line):
         "shape": tuple(terms[1].split("x"))
     }
 
+def isfloat(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
 
-def find_initializer(name):
-    for i in initializers:
-        if i["name"] == name:
-            return i
-    return None
+def isInt(value):
+    try:
+        int(value)
+        return True
+    except ValueError:
+        return False
 
+def convert_to_number(value):
+    if isInt(value):
+        return int(value)
+    if isfloat(value):
+        return float(value)
+    return value
 
 def parse_main(line):
     inputs = []
@@ -47,7 +60,7 @@ def parse_main(line):
     right = line.split("=", 1)[1].strip()
 
 # do left side (outputs)
-    left_terms = left.split("/")
+    left_terms = left.rsplit("/", 1)
     if len(left_terms) > 1:
         output["name"] = left_terms[0]
         output["variable"] = left_terms[1].split(":")[0]
@@ -73,10 +86,10 @@ def parse_main(line):
 # do inputs
     op_inputs_splits = op_inputs.split(", ")
     for op_in in op_inputs_splits:
-        if len(op_in.split("/")) == 1:
+        if len(op_in.rsplit("/", 1)) == 1:
             inputs.append(op_in)
         else:
-            spl = op_in.split("/")
+            spl = op_in.rsplit("/", 1)
             inputs.append({
                 "name": spl[0],
                 "variable": spl[1].split(":")[0],
@@ -97,13 +110,13 @@ def parse_main(line):
 
         if "[" in r_arg and "]" in r_arg:
             r_arg = r_arg[r_arg.find("[") + 1:r_arg.rfind("]")].split(", ")
-            r_arg = [int(x) for x in r_arg]
+            r_arg = [convert_to_number(x) for x in r_arg]
             arguments.append({
                 l_arg.strip(): r_arg  
             })
         else:
             arguments.append({
-                l_arg.strip(): r_arg.strip()   
+                l_arg.strip(): convert_to_number(r_arg.strip())   
             })
     return {
         "output": output,

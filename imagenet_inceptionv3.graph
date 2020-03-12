@@ -1,0 +1,798 @@
+graph inceptionv3 (
+  %input_1[FLOAT, Nx299x299x3]
+) initializers (
+  %predictions/kernel:0[FLOAT, 2048x1000]
+  %predictions/bias:0[FLOAT, 1000]
+  %mixed10/concat:0_reshape_start[INT64, 2]
+  %scale[FLOAT, 320]
+  %bias[FLOAT, 320]
+  %mean[FLOAT, 320]
+  %var[FLOAT, 320]
+  %scale1[FLOAT, 192]
+  %bias1[FLOAT, 192]
+  %mean1[FLOAT, 192]
+  %var1[FLOAT, 192]
+  %conv2d_86/kernel:0[FLOAT, 320x2048x1x1]
+  %scale2[FLOAT, 384]
+  %bias2[FLOAT, 384]
+  %mean2[FLOAT, 384]
+  %var2[FLOAT, 384]
+  %scale3[FLOAT, 384]
+  %bias3[FLOAT, 384]
+  %mean3[FLOAT, 384]
+  %var3[FLOAT, 384]
+  %scale4[FLOAT, 384]
+  %bias4[FLOAT, 384]
+  %mean4[FLOAT, 384]
+  %var4[FLOAT, 384]
+  %scale5[FLOAT, 384]
+  %bias5[FLOAT, 384]
+  %mean5[FLOAT, 384]
+  %var5[FLOAT, 384]
+  %conv2d_94/kernel:0[FLOAT, 192x2048x1x1]
+  %conv2d_88/kernel:0[FLOAT, 384x384x1x3]
+  %conv2d_89/kernel:0[FLOAT, 384x384x3x1]
+  %conv2d_92/kernel:0[FLOAT, 384x384x1x3]
+  %conv2d_93/kernel:0[FLOAT, 384x384x3x1]
+  %scale6[FLOAT, 320]
+  %bias6[FLOAT, 320]
+  %mean6[FLOAT, 320]
+  %var6[FLOAT, 320]
+  %scale7[FLOAT, 192]
+  %bias7[FLOAT, 192]
+  %mean7[FLOAT, 192]
+  %var7[FLOAT, 192]
+  %scale8[FLOAT, 384]
+  %bias8[FLOAT, 384]
+  %mean8[FLOAT, 384]
+  %var8[FLOAT, 384]
+  %scale9[FLOAT, 384]
+  %bias9[FLOAT, 384]
+  %mean9[FLOAT, 384]
+  %var9[FLOAT, 384]
+  %conv2d_77/kernel:0[FLOAT, 320x1280x1x1]
+  %scale10[FLOAT, 384]
+  %bias10[FLOAT, 384]
+  %mean10[FLOAT, 384]
+  %var10[FLOAT, 384]
+  %scale11[FLOAT, 384]
+  %bias11[FLOAT, 384]
+  %mean11[FLOAT, 384]
+  %var11[FLOAT, 384]
+  %scale12[FLOAT, 384]
+  %bias12[FLOAT, 384]
+  %mean12[FLOAT, 384]
+  %var12[FLOAT, 384]
+  %scale13[FLOAT, 384]
+  %bias13[FLOAT, 384]
+  %mean13[FLOAT, 384]
+  %var13[FLOAT, 384]
+  %conv2d_85/kernel:0[FLOAT, 192x1280x1x1]
+  %conv2d_87/kernel:0[FLOAT, 384x2048x1x1]
+  %conv2d_91/kernel:0[FLOAT, 384x448x3x3]
+  %conv2d_79/kernel:0[FLOAT, 384x384x1x3]
+  %conv2d_80/kernel:0[FLOAT, 384x384x3x1]
+  %conv2d_83/kernel:0[FLOAT, 384x384x1x3]
+  %conv2d_84/kernel:0[FLOAT, 384x384x3x1]
+  %scale14[FLOAT, 448]
+  %bias14[FLOAT, 448]
+  %mean14[FLOAT, 448]
+  %var14[FLOAT, 448]
+  %scale15[FLOAT, 320]
+  %bias15[FLOAT, 320]
+  %mean15[FLOAT, 320]
+  %var15[FLOAT, 320]
+  %scale16[FLOAT, 192]
+  %bias16[FLOAT, 192]
+  %mean16[FLOAT, 192]
+  %var16[FLOAT, 192]
+  %scale17[FLOAT, 384]
+  %bias17[FLOAT, 384]
+  %mean17[FLOAT, 384]
+  %var17[FLOAT, 384]
+  %scale18[FLOAT, 384]
+  %bias18[FLOAT, 384]
+  %mean18[FLOAT, 384]
+  %var18[FLOAT, 384]
+  %conv2d_90/kernel:0[FLOAT, 448x2048x1x1]
+  %conv2d_72/kernel:0[FLOAT, 320x192x3x3]
+  %conv2d_76/kernel:0[FLOAT, 192x192x3x3]
+  %conv2d_78/kernel:0[FLOAT, 384x1280x1x1]
+  %conv2d_82/kernel:0[FLOAT, 384x448x3x3]
+  %scale19[FLOAT, 192]
+  %bias19[FLOAT, 192]
+  %mean19[FLOAT, 192]
+  %var19[FLOAT, 192]
+  %scale20[FLOAT, 192]
+  %bias20[FLOAT, 192]
+  %mean20[FLOAT, 192]
+  %var20[FLOAT, 192]
+  %scale21[FLOAT, 192]
+  %bias21[FLOAT, 192]
+  %mean21[FLOAT, 192]
+  %var21[FLOAT, 192]
+  %scale22[FLOAT, 192]
+  %bias22[FLOAT, 192]
+  %mean22[FLOAT, 192]
+  %var22[FLOAT, 192]
+  %scale23[FLOAT, 192]
+  %bias23[FLOAT, 192]
+  %mean23[FLOAT, 192]
+  %var23[FLOAT, 192]
+  %scale24[FLOAT, 192]
+  %bias24[FLOAT, 192]
+  %mean24[FLOAT, 192]
+  %var24[FLOAT, 192]
+  %conv2d_61/kernel:0[FLOAT, 192x768x1x1]
+  %conv2d_64/kernel:0[FLOAT, 192x192x7x1]
+  %conv2d_69/kernel:0[FLOAT, 192x192x1x7]
+  %conv2d_70/kernel:0[FLOAT, 192x768x1x1]
+  %scale25[FLOAT, 448]
+  %bias25[FLOAT, 448]
+  %mean25[FLOAT, 448]
+  %var25[FLOAT, 448]
+  %conv2d_71/kernel:0[FLOAT, 192x768x1x1]
+  %conv2d_75/kernel:0[FLOAT, 192x192x7x1]
+  %conv2d_81/kernel:0[FLOAT, 448x1280x1x1]
+  %scale26[FLOAT, 192]
+  %bias26[FLOAT, 192]
+  %mean26[FLOAT, 192]
+  %var26[FLOAT, 192]
+  %scale27[FLOAT, 192]
+  %bias27[FLOAT, 192]
+  %mean27[FLOAT, 192]
+  %var27[FLOAT, 192]
+  %scale28[FLOAT, 192]
+  %bias28[FLOAT, 192]
+  %mean28[FLOAT, 192]
+  %var28[FLOAT, 192]
+  %scale29[FLOAT, 192]
+  %bias29[FLOAT, 192]
+  %mean29[FLOAT, 192]
+  %var29[FLOAT, 192]
+  %scale30[FLOAT, 192]
+  %bias30[FLOAT, 192]
+  %mean30[FLOAT, 192]
+  %var30[FLOAT, 192]
+  %scale31[FLOAT, 192]
+  %bias31[FLOAT, 192]
+  %mean31[FLOAT, 192]
+  %var31[FLOAT, 192]
+  %scale32[FLOAT, 192]
+  %bias32[FLOAT, 192]
+  %mean32[FLOAT, 192]
+  %var32[FLOAT, 192]
+  %conv2d_63/kernel:0[FLOAT, 192x192x1x7]
+  %conv2d_68/kernel:0[FLOAT, 192x192x7x1]
+  %conv2d_74/kernel:0[FLOAT, 192x192x1x7]
+  %conv2d_51/kernel:0[FLOAT, 192x768x1x1]
+  %conv2d_54/kernel:0[FLOAT, 192x160x7x1]
+  %conv2d_59/kernel:0[FLOAT, 192x160x1x7]
+  %conv2d_60/kernel:0[FLOAT, 192x768x1x1]
+  %scale33[FLOAT, 192]
+  %bias33[FLOAT, 192]
+  %mean33[FLOAT, 192]
+  %var33[FLOAT, 192]
+  %scale34[FLOAT, 192]
+  %bias34[FLOAT, 192]
+  %mean34[FLOAT, 192]
+  %var34[FLOAT, 192]
+  %scale35[FLOAT, 192]
+  %bias35[FLOAT, 192]
+  %mean35[FLOAT, 192]
+  %var35[FLOAT, 192]
+  %scale36[FLOAT, 160]
+  %bias36[FLOAT, 160]
+  %mean36[FLOAT, 160]
+  %var36[FLOAT, 160]
+  %scale37[FLOAT, 160]
+  %bias37[FLOAT, 160]
+  %mean37[FLOAT, 160]
+  %var37[FLOAT, 160]
+  %conv2d_62/kernel:0[FLOAT, 192x768x1x1]
+  %conv2d_67/kernel:0[FLOAT, 192x192x1x7]
+  %conv2d_73/kernel:0[FLOAT, 192x768x1x1]
+  %scale38[FLOAT, 192]
+  %bias38[FLOAT, 192]
+  %mean38[FLOAT, 192]
+  %var38[FLOAT, 192]
+  %scale39[FLOAT, 192]
+  %bias39[FLOAT, 192]
+  %mean39[FLOAT, 192]
+  %var39[FLOAT, 192]
+  %scale40[FLOAT, 192]
+  %bias40[FLOAT, 192]
+  %mean40[FLOAT, 192]
+  %var40[FLOAT, 192]
+  %scale41[FLOAT, 192]
+  %bias41[FLOAT, 192]
+  %mean41[FLOAT, 192]
+  %var41[FLOAT, 192]
+  %conv2d_53/kernel:0[FLOAT, 160x160x1x7]
+  %conv2d_58/kernel:0[FLOAT, 160x160x7x1]
+  %conv2d_41/kernel:0[FLOAT, 192x768x1x1]
+  %conv2d_44/kernel:0[FLOAT, 192x160x7x1]
+  %conv2d_49/kernel:0[FLOAT, 192x160x1x7]
+  %conv2d_50/kernel:0[FLOAT, 192x768x1x1]
+  %scale42[FLOAT, 192]
+  %bias42[FLOAT, 192]
+  %mean42[FLOAT, 192]
+  %var42[FLOAT, 192]
+  %scale43[FLOAT, 160]
+  %bias43[FLOAT, 160]
+  %mean43[FLOAT, 160]
+  %var43[FLOAT, 160]
+  %scale44[FLOAT, 160]
+  %bias44[FLOAT, 160]
+  %mean44[FLOAT, 160]
+  %var44[FLOAT, 160]
+  %conv2d_66/kernel:0[FLOAT, 192x192x7x1]
+  %scale45[FLOAT, 160]
+  %bias45[FLOAT, 160]
+  %mean45[FLOAT, 160]
+  %var45[FLOAT, 160]
+  %scale46[FLOAT, 160]
+  %bias46[FLOAT, 160]
+  %mean46[FLOAT, 160]
+  %var46[FLOAT, 160]
+  %conv2d_52/kernel:0[FLOAT, 160x768x1x1]
+  %conv2d_57/kernel:0[FLOAT, 160x160x1x7]
+  %scale47[FLOAT, 192]
+  %bias47[FLOAT, 192]
+  %mean47[FLOAT, 192]
+  %var47[FLOAT, 192]
+  %scale48[FLOAT, 192]
+  %bias48[FLOAT, 192]
+  %mean48[FLOAT, 192]
+  %var48[FLOAT, 192]
+  %scale49[FLOAT, 192]
+  %bias49[FLOAT, 192]
+  %mean49[FLOAT, 192]
+  %var49[FLOAT, 192]
+  %scale50[FLOAT, 192]
+  %bias50[FLOAT, 192]
+  %mean50[FLOAT, 192]
+  %var50[FLOAT, 192]
+  %conv2d_43/kernel:0[FLOAT, 160x160x1x7]
+  %conv2d_48/kernel:0[FLOAT, 160x160x7x1]
+  %scale51[FLOAT, 192]
+  %bias51[FLOAT, 192]
+  %mean51[FLOAT, 192]
+  %var51[FLOAT, 192]
+  %conv2d_31/kernel:0[FLOAT, 192x768x1x1]
+  %conv2d_34/kernel:0[FLOAT, 192x128x7x1]
+  %conv2d_39/kernel:0[FLOAT, 192x128x1x7]
+  %conv2d_40/kernel:0[FLOAT, 192x768x1x1]
+  %scale52[FLOAT, 160]
+  %bias52[FLOAT, 160]
+  %mean52[FLOAT, 160]
+  %var52[FLOAT, 160]
+  %conv2d_65/kernel:0[FLOAT, 192x768x1x1]
+  %scale53[FLOAT, 160]
+  %bias53[FLOAT, 160]
+  %mean53[FLOAT, 160]
+  %var53[FLOAT, 160]
+  %scale54[FLOAT, 160]
+  %bias54[FLOAT, 160]
+  %mean54[FLOAT, 160]
+  %var54[FLOAT, 160]
+  %conv2d_56/kernel:0[FLOAT, 160x160x7x1]
+  %scale55[FLOAT, 128]
+  %bias55[FLOAT, 128]
+  %mean55[FLOAT, 128]
+  %var55[FLOAT, 128]
+  %scale56[FLOAT, 128]
+  %bias56[FLOAT, 128]
+  %mean56[FLOAT, 128]
+  %var56[FLOAT, 128]
+  %conv2d_42/kernel:0[FLOAT, 160x768x1x1]
+  %conv2d_47/kernel:0[FLOAT, 160x160x1x7]
+  %scale57[FLOAT, 384]
+  %bias57[FLOAT, 384]
+  %mean57[FLOAT, 384]
+  %var57[FLOAT, 384]
+  %scale58[FLOAT, 96]
+  %bias58[FLOAT, 96]
+  %mean58[FLOAT, 96]
+  %var58[FLOAT, 96]
+  %conv2d_33/kernel:0[FLOAT, 128x128x1x7]
+  %conv2d_38/kernel:0[FLOAT, 128x128x7x1]
+  %scale59[FLOAT, 160]
+  %bias59[FLOAT, 160]
+  %mean59[FLOAT, 160]
+  %var59[FLOAT, 160]
+  %conv2d_27/kernel:0[FLOAT, 384x288x3x3]
+  %conv2d_30/kernel:0[FLOAT, 96x96x3x3]
+  %scale60[FLOAT, 160]
+  %bias60[FLOAT, 160]
+  %mean60[FLOAT, 160]
+  %var60[FLOAT, 160]
+  %conv2d_55/kernel:0[FLOAT, 160x768x1x1]
+  %scale61[FLOAT, 64]
+  %bias61[FLOAT, 64]
+  %mean61[FLOAT, 64]
+  %var61[FLOAT, 64]
+  %scale62[FLOAT, 64]
+  %bias62[FLOAT, 64]
+  %mean62[FLOAT, 64]
+  %var62[FLOAT, 64]
+  %scale63[FLOAT, 96]
+  %bias63[FLOAT, 96]
+  %mean63[FLOAT, 96]
+  %var63[FLOAT, 96]
+  %scale64[FLOAT, 64]
+  %bias64[FLOAT, 64]
+  %mean64[FLOAT, 64]
+  %var64[FLOAT, 64]
+  %scale65[FLOAT, 128]
+  %bias65[FLOAT, 128]
+  %mean65[FLOAT, 128]
+  %var65[FLOAT, 128]
+  %scale66[FLOAT, 128]
+  %bias66[FLOAT, 128]
+  %mean66[FLOAT, 128]
+  %var66[FLOAT, 128]
+  %conv2d_46/kernel:0[FLOAT, 160x160x7x1]
+  %scale67[FLOAT, 96]
+  %bias67[FLOAT, 96]
+  %mean67[FLOAT, 96]
+  %var67[FLOAT, 96]
+  %conv2d_20/kernel:0[FLOAT, 64x288x1x1]
+  %conv2d_22/kernel:0[FLOAT, 64x48x5x5]
+  %conv2d_25/kernel:0[FLOAT, 96x96x3x3]
+  %conv2d_26/kernel:0[FLOAT, 64x288x1x1]
+  %conv2d_32/kernel:0[FLOAT, 128x768x1x1]
+  %conv2d_37/kernel:0[FLOAT, 128x128x1x7]
+  %conv2d_29/kernel:0[FLOAT, 96x64x3x3]
+  %scale68[FLOAT, 160]
+  %bias68[FLOAT, 160]
+  %mean68[FLOAT, 160]
+  %var68[FLOAT, 160]
+  %scale69[FLOAT, 48]
+  %bias69[FLOAT, 48]
+  %mean69[FLOAT, 48]
+  %var69[FLOAT, 48]
+  %scale70[FLOAT, 96]
+  %bias70[FLOAT, 96]
+  %mean70[FLOAT, 96]
+  %var70[FLOAT, 96]
+  %scale71[FLOAT, 128]
+  %bias71[FLOAT, 128]
+  %mean71[FLOAT, 128]
+  %var71[FLOAT, 128]
+  %conv2d_45/kernel:0[FLOAT, 160x768x1x1]
+  %scale72[FLOAT, 64]
+  %bias72[FLOAT, 64]
+  %mean72[FLOAT, 64]
+  %var72[FLOAT, 64]
+  %scale73[FLOAT, 64]
+  %bias73[FLOAT, 64]
+  %mean73[FLOAT, 64]
+  %var73[FLOAT, 64]
+  %scale74[FLOAT, 64]
+  %bias74[FLOAT, 64]
+  %mean74[FLOAT, 64]
+  %var74[FLOAT, 64]
+  %scale75[FLOAT, 96]
+  %bias75[FLOAT, 96]
+  %mean75[FLOAT, 96]
+  %var75[FLOAT, 96]
+  %scale76[FLOAT, 64]
+  %bias76[FLOAT, 64]
+  %mean76[FLOAT, 64]
+  %var76[FLOAT, 64]
+  %conv2d_21/kernel:0[FLOAT, 48x288x1x1]
+  %conv2d_24/kernel:0[FLOAT, 96x64x3x3]
+  %conv2d_36/kernel:0[FLOAT, 128x128x7x1]
+  %conv2d_28/kernel:0[FLOAT, 64x288x1x1]
+  %conv2d_13/kernel:0[FLOAT, 64x256x1x1]
+  %conv2d_15/kernel:0[FLOAT, 64x48x5x5]
+  %conv2d_18/kernel:0[FLOAT, 96x96x3x3]
+  %conv2d_19/kernel:0[FLOAT, 64x256x1x1]
+  %scale77[FLOAT, 64]
+  %bias77[FLOAT, 64]
+  %mean77[FLOAT, 64]
+  %var77[FLOAT, 64]
+  %scale78[FLOAT, 128]
+  %bias78[FLOAT, 128]
+  %mean78[FLOAT, 128]
+  %var78[FLOAT, 128]
+  %scale79[FLOAT, 48]
+  %bias79[FLOAT, 48]
+  %mean79[FLOAT, 48]
+  %var79[FLOAT, 48]
+  %scale80[FLOAT, 96]
+  %bias80[FLOAT, 96]
+  %mean80[FLOAT, 96]
+  %var80[FLOAT, 96]
+  %conv2d_23/kernel:0[FLOAT, 64x288x1x1]
+  %conv2d_35/kernel:0[FLOAT, 128x768x1x1]
+  %scale81[FLOAT, 64]
+  %bias81[FLOAT, 64]
+  %mean81[FLOAT, 64]
+  %var81[FLOAT, 64]
+  %scale82[FLOAT, 64]
+  %bias82[FLOAT, 64]
+  %mean82[FLOAT, 64]
+  %var82[FLOAT, 64]
+  %scale83[FLOAT, 96]
+  %bias83[FLOAT, 96]
+  %mean83[FLOAT, 96]
+  %var83[FLOAT, 96]
+  %scale84[FLOAT, 32]
+  %bias84[FLOAT, 32]
+  %mean84[FLOAT, 32]
+  %var84[FLOAT, 32]
+  %conv2d_14/kernel:0[FLOAT, 48x256x1x1]
+  %conv2d_17/kernel:0[FLOAT, 96x64x3x3]
+  %conv2d_6/kernel:0[FLOAT, 64x192x1x1]
+  %conv2d_8/kernel:0[FLOAT, 64x48x5x5]
+  %conv2d_11/kernel:0[FLOAT, 96x96x3x3]
+  %conv2d_12/kernel:0[FLOAT, 32x192x1x1]
+  %scale85[FLOAT, 64]
+  %bias85[FLOAT, 64]
+  %mean85[FLOAT, 64]
+  %var85[FLOAT, 64]
+  %scale86[FLOAT, 48]
+  %bias86[FLOAT, 48]
+  %mean86[FLOAT, 48]
+  %var86[FLOAT, 48]
+  %scale87[FLOAT, 96]
+  %bias87[FLOAT, 96]
+  %mean87[FLOAT, 96]
+  %var87[FLOAT, 96]
+  %conv2d_16/kernel:0[FLOAT, 64x256x1x1]
+  %scale88[FLOAT, 192]
+  %bias88[FLOAT, 192]
+  %mean88[FLOAT, 192]
+  %var88[FLOAT, 192]
+  %conv2d_7/kernel:0[FLOAT, 48x192x1x1]
+  %conv2d_10/kernel:0[FLOAT, 96x64x3x3]
+  %conv2d_5/kernel:0[FLOAT, 192x80x3x3]
+  %scale89[FLOAT, 64]
+  %bias89[FLOAT, 64]
+  %mean89[FLOAT, 64]
+  %var89[FLOAT, 64]
+  %scale90[FLOAT, 80]
+  %bias90[FLOAT, 80]
+  %mean90[FLOAT, 80]
+  %var90[FLOAT, 80]
+  %conv2d_9/kernel:0[FLOAT, 64x192x1x1]
+  %conv2d_4/kernel:0[FLOAT, 80x64x1x1]
+  %scale91[FLOAT, 64]
+  %bias91[FLOAT, 64]
+  %mean91[FLOAT, 64]
+  %var91[FLOAT, 64]
+  %conv2d_3/kernel:0[FLOAT, 64x32x3x3]
+  %scale92[FLOAT, 32]
+  %bias92[FLOAT, 32]
+  %mean92[FLOAT, 32]
+  %var92[FLOAT, 32]
+  %conv2d_2/kernel:0[FLOAT, 32x32x3x3]
+  %scale93[FLOAT, 32]
+  %bias93[FLOAT, 32]
+  %mean93[FLOAT, 32]
+  %var93[FLOAT, 32]
+  %conv2d_1/kernel:0[FLOAT, 32x3x3x3]
+) {
+  %adjusted_input93 = Transpose[perm = [0, 3, 1, 2]](%input_1)
+  %convolution_output93 = Conv[auto_pad = 'VALID', dilations = [1, 1], group = 1, kernel_shape = [3, 3], strides = [2, 2]](%adjusted_input93, %conv2d_1/kernel:0)
+  %batch_norm_output_buffer93 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output93, %scale93, %bias93, %mean93, %var93)
+  %activation_1/Relu:0 = Relu(%batch_norm_output_buffer93)
+  %convolution_output92 = Conv[auto_pad = 'VALID', dilations = [1, 1], group = 1, kernel_shape = [3, 3], strides = [1, 1]](%activation_1/Relu:0, %conv2d_2/kernel:0)
+  %batch_norm_output_buffer92 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output92, %scale92, %bias92, %mean92, %var92)
+  %activation_2/Relu:0 = Relu(%batch_norm_output_buffer92)
+  %convolution_output91 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 3], pads = [1, 1, 1, 1], strides = [1, 1]](%activation_2/Relu:0, %conv2d_3/kernel:0)
+  %batch_norm_output_buffer91 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output91, %scale91, %bias91, %mean91, %var91)
+  %activation_3/Relu:0 = Relu(%batch_norm_output_buffer91)
+  %activation_3/Relu:0_pooling0 = MaxPool[auto_pad = 'VALID', ceil_mode = 0, kernel_shape = [3, 3], strides = [2, 2]](%activation_3/Relu:0)
+  %convolution_output90 = Conv[auto_pad = 'VALID', dilations = [1, 1], group = 1, kernel_shape = [1, 1], strides = [1, 1]](%activation_3/Relu:0_pooling0, %conv2d_4/kernel:0)
+  %batch_norm_output_buffer90 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output90, %scale90, %bias90, %mean90, %var90)
+  %activation_4/Relu:0 = Relu(%batch_norm_output_buffer90)
+  %convolution_output88 = Conv[auto_pad = 'VALID', dilations = [1, 1], group = 1, kernel_shape = [3, 3], strides = [1, 1]](%activation_4/Relu:0, %conv2d_5/kernel:0)
+  %batch_norm_output_buffer88 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output88, %scale88, %bias88, %mean88, %var88)
+  %activation_5/Relu:0 = Relu(%batch_norm_output_buffer88)
+  %activation_5/Relu:0_pooling0 = MaxPool[auto_pad = 'VALID', ceil_mode = 0, kernel_shape = [3, 3], strides = [2, 2]](%activation_5/Relu:0)
+  %max_pooling2d_2/MaxPool:0 = Identity(%activation_5/Relu:0_pooling0)
+  %convolution_output89 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%max_pooling2d_2/MaxPool:0, %conv2d_9/kernel:0)
+  %batch_norm_output_buffer89 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output89, %scale89, %bias89, %mean89, %var89)
+  %activation_9/Relu:0 = Relu(%batch_norm_output_buffer89)
+  %convolution_output87 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 3], pads = [1, 1, 1, 1], strides = [1, 1]](%activation_9/Relu:0, %conv2d_10/kernel:0)
+  %batch_norm_output_buffer87 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output87, %scale87, %bias87, %mean87, %var87)
+  %activation_10/Relu:0 = Relu(%batch_norm_output_buffer87)
+  %convolution_output86 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%max_pooling2d_2/MaxPool:0, %conv2d_7/kernel:0)
+  %batch_norm_output_buffer86 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output86, %scale86, %bias86, %mean86, %var86)
+  %activation_7/Relu:0 = Relu(%batch_norm_output_buffer86)
+  %max_pooling2d_2/MaxPool:0_pooling0 = AveragePool[auto_pad = 'SAME_UPPER', ceil_mode = 0, kernel_shape = [3, 3], strides = [1, 1]](%max_pooling2d_2/MaxPool:0)
+  %convolution_output84 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%max_pooling2d_2/MaxPool:0_pooling0, %conv2d_12/kernel:0)
+  %convolution_output83 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 3], pads = [1, 1, 1, 1], strides = [1, 1]](%activation_10/Relu:0, %conv2d_11/kernel:0)
+  %convolution_output82 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [5, 5], pads = [2, 2, 2, 2], strides = [1, 1]](%activation_7/Relu:0, %conv2d_8/kernel:0)
+  %convolution_output81 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%max_pooling2d_2/MaxPool:0, %conv2d_6/kernel:0)
+  %batch_norm_output_buffer84 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output84, %scale84, %bias84, %mean84, %var84)
+  %batch_norm_output_buffer83 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output83, %scale83, %bias83, %mean83, %var83)
+  %batch_norm_output_buffer82 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output82, %scale82, %bias82, %mean82, %var82)
+  %batch_norm_output_buffer81 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output81, %scale81, %bias81, %mean81, %var81)
+  %activation_12/Relu:0 = Relu(%batch_norm_output_buffer84)
+  %activation_11/Relu:0 = Relu(%batch_norm_output_buffer83)
+  %activation_8/Relu:0 = Relu(%batch_norm_output_buffer82)
+  %activation_6/Relu:0 = Relu(%batch_norm_output_buffer81)
+  %mixed0/concat:0 = Concat[axis = 1](%activation_6/Relu:0, %activation_8/Relu:0, %activation_11/Relu:0, %activation_12/Relu:0)
+  %convolution_output85 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed0/concat:0, %conv2d_16/kernel:0)
+  %batch_norm_output_buffer85 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output85, %scale85, %bias85, %mean85, %var85)
+  %activation_16/Relu:0 = Relu(%batch_norm_output_buffer85)
+  %convolution_output80 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 3], pads = [1, 1, 1, 1], strides = [1, 1]](%activation_16/Relu:0, %conv2d_17/kernel:0)
+  %batch_norm_output_buffer80 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output80, %scale80, %bias80, %mean80, %var80)
+  %activation_17/Relu:0 = Relu(%batch_norm_output_buffer80)
+  %convolution_output79 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed0/concat:0, %conv2d_14/kernel:0)
+  %batch_norm_output_buffer79 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output79, %scale79, %bias79, %mean79, %var79)
+  %activation_14/Relu:0 = Relu(%batch_norm_output_buffer79)
+  %mixed0/concat:0_pooling0 = AveragePool[auto_pad = 'SAME_UPPER', ceil_mode = 0, kernel_shape = [3, 3], strides = [1, 1]](%mixed0/concat:0)
+  %convolution_output76 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed0/concat:0_pooling0, %conv2d_19/kernel:0)
+  %convolution_output75 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 3], pads = [1, 1, 1, 1], strides = [1, 1]](%activation_17/Relu:0, %conv2d_18/kernel:0)
+  %convolution_output74 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [5, 5], pads = [2, 2, 2, 2], strides = [1, 1]](%activation_14/Relu:0, %conv2d_15/kernel:0)
+  %convolution_output73 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed0/concat:0, %conv2d_13/kernel:0)
+  %batch_norm_output_buffer76 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output76, %scale76, %bias76, %mean76, %var76)
+  %batch_norm_output_buffer75 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output75, %scale75, %bias75, %mean75, %var75)
+  %batch_norm_output_buffer74 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output74, %scale74, %bias74, %mean74, %var74)
+  %batch_norm_output_buffer73 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output73, %scale73, %bias73, %mean73, %var73)
+  %activation_19/Relu:0 = Relu(%batch_norm_output_buffer76)
+  %activation_18/Relu:0 = Relu(%batch_norm_output_buffer75)
+  %activation_15/Relu:0 = Relu(%batch_norm_output_buffer74)
+  %activation_13/Relu:0 = Relu(%batch_norm_output_buffer73)
+  %mixed1/concat:0 = Concat[axis = 1](%activation_13/Relu:0, %activation_15/Relu:0, %activation_18/Relu:0, %activation_19/Relu:0)
+  %convolution_output77 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed1/concat:0, %conv2d_23/kernel:0)
+  %batch_norm_output_buffer77 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output77, %scale77, %bias77, %mean77, %var77)
+  %activation_23/Relu:0 = Relu(%batch_norm_output_buffer77)
+  %convolution_output70 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 3], pads = [1, 1, 1, 1], strides = [1, 1]](%activation_23/Relu:0, %conv2d_24/kernel:0)
+  %batch_norm_output_buffer70 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output70, %scale70, %bias70, %mean70, %var70)
+  %activation_24/Relu:0 = Relu(%batch_norm_output_buffer70)
+  %convolution_output69 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed1/concat:0, %conv2d_21/kernel:0)
+  %batch_norm_output_buffer69 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output69, %scale69, %bias69, %mean69, %var69)
+  %activation_21/Relu:0 = Relu(%batch_norm_output_buffer69)
+  %mixed1/concat:0_pooling0 = AveragePool[auto_pad = 'SAME_UPPER', ceil_mode = 0, kernel_shape = [3, 3], strides = [1, 1]](%mixed1/concat:0)
+  %convolution_output64 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed1/concat:0_pooling0, %conv2d_26/kernel:0)
+  %convolution_output63 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 3], pads = [1, 1, 1, 1], strides = [1, 1]](%activation_24/Relu:0, %conv2d_25/kernel:0)
+  %convolution_output62 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [5, 5], pads = [2, 2, 2, 2], strides = [1, 1]](%activation_21/Relu:0, %conv2d_22/kernel:0)
+  %convolution_output61 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed1/concat:0, %conv2d_20/kernel:0)
+  %batch_norm_output_buffer64 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output64, %scale64, %bias64, %mean64, %var64)
+  %batch_norm_output_buffer63 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output63, %scale63, %bias63, %mean63, %var63)
+  %batch_norm_output_buffer62 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output62, %scale62, %bias62, %mean62, %var62)
+  %batch_norm_output_buffer61 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output61, %scale61, %bias61, %mean61, %var61)
+  %activation_26/Relu:0 = Relu(%batch_norm_output_buffer64)
+  %activation_25/Relu:0 = Relu(%batch_norm_output_buffer63)
+  %activation_22/Relu:0 = Relu(%batch_norm_output_buffer62)
+  %activation_20/Relu:0 = Relu(%batch_norm_output_buffer61)
+  %mixed2/concat:0 = Concat[axis = 1](%activation_20/Relu:0, %activation_22/Relu:0, %activation_25/Relu:0, %activation_26/Relu:0)
+  %convolution_output72 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed2/concat:0, %conv2d_28/kernel:0)
+  %batch_norm_output_buffer72 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output72, %scale72, %bias72, %mean72, %var72)
+  %activation_28/Relu:0 = Relu(%batch_norm_output_buffer72)
+  %convolution_output67 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 3], pads = [1, 1, 1, 1], strides = [1, 1]](%activation_28/Relu:0, %conv2d_29/kernel:0)
+  %batch_norm_output_buffer67 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output67, %scale67, %bias67, %mean67, %var67)
+  %activation_29/Relu:0 = Relu(%batch_norm_output_buffer67)
+  %convolution_output58 = Conv[auto_pad = 'VALID', dilations = [1, 1], group = 1, kernel_shape = [3, 3], strides = [2, 2]](%activation_29/Relu:0, %conv2d_30/kernel:0)
+  %convolution_output57 = Conv[auto_pad = 'VALID', dilations = [1, 1], group = 1, kernel_shape = [3, 3], strides = [2, 2]](%mixed2/concat:0, %conv2d_27/kernel:0)
+  %batch_norm_output_buffer58 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output58, %scale58, %bias58, %mean58, %var58)
+  %batch_norm_output_buffer57 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output57, %scale57, %bias57, %mean57, %var57)
+  %mixed2/concat:0_pooling0 = MaxPool[auto_pad = 'VALID', ceil_mode = 0, kernel_shape = [3, 3], strides = [2, 2]](%mixed2/concat:0)
+  %activation_30/Relu:0 = Relu(%batch_norm_output_buffer58)
+  %activation_27/Relu:0 = Relu(%batch_norm_output_buffer57)
+  %mixed3/concat:0 = Concat[axis = 1](%activation_27/Relu:0, %activation_30/Relu:0, %mixed2/concat:0_pooling0)
+  %convolution_output78 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed3/concat:0, %conv2d_35/kernel:0)
+  %batch_norm_output_buffer78 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output78, %scale78, %bias78, %mean78, %var78)
+  %activation_35/Relu:0 = Relu(%batch_norm_output_buffer78)
+  %convolution_output71 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_35/Relu:0, %conv2d_36/kernel:0)
+  %batch_norm_output_buffer71 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output71, %scale71, %bias71, %mean71, %var71)
+  %activation_36/Relu:0 = Relu(%batch_norm_output_buffer71)
+  %convolution_output66 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_36/Relu:0, %conv2d_37/kernel:0)
+  %batch_norm_output_buffer66 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output66, %scale66, %bias66, %mean66, %var66)
+  %activation_37/Relu:0 = Relu(%batch_norm_output_buffer66)
+  %convolution_output56 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_37/Relu:0, %conv2d_38/kernel:0)
+  %batch_norm_output_buffer56 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output56, %scale56, %bias56, %mean56, %var56)
+  %activation_38/Relu:0 = Relu(%batch_norm_output_buffer56)
+  %convolution_output65 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed3/concat:0, %conv2d_32/kernel:0)
+  %batch_norm_output_buffer65 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output65, %scale65, %bias65, %mean65, %var65)
+  %activation_32/Relu:0 = Relu(%batch_norm_output_buffer65)
+  %convolution_output55 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_32/Relu:0, %conv2d_33/kernel:0)
+  %batch_norm_output_buffer55 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output55, %scale55, %bias55, %mean55, %var55)
+  %activation_33/Relu:0 = Relu(%batch_norm_output_buffer55)
+  %mixed3/concat:0_pooling0 = AveragePool[auto_pad = 'SAME_UPPER', ceil_mode = 0, kernel_shape = [3, 3], strides = [1, 1]](%mixed3/concat:0)
+  %convolution_output50 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed3/concat:0_pooling0, %conv2d_40/kernel:0)
+  %convolution_output49 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_38/Relu:0, %conv2d_39/kernel:0)
+  %convolution_output48 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_33/Relu:0, %conv2d_34/kernel:0)
+  %convolution_output47 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed3/concat:0, %conv2d_31/kernel:0)
+  %batch_norm_output_buffer50 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output50, %scale50, %bias50, %mean50, %var50)
+  %batch_norm_output_buffer49 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output49, %scale49, %bias49, %mean49, %var49)
+  %batch_norm_output_buffer48 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output48, %scale48, %bias48, %mean48, %var48)
+  %batch_norm_output_buffer47 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output47, %scale47, %bias47, %mean47, %var47)
+  %activation_40/Relu:0 = Relu(%batch_norm_output_buffer50)
+  %activation_39/Relu:0 = Relu(%batch_norm_output_buffer49)
+  %activation_34/Relu:0 = Relu(%batch_norm_output_buffer48)
+  %activation_31/Relu:0 = Relu(%batch_norm_output_buffer47)
+  %mixed4/concat:0 = Concat[axis = 1](%activation_31/Relu:0, %activation_34/Relu:0, %activation_39/Relu:0, %activation_40/Relu:0)
+  %convolution_output68 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed4/concat:0, %conv2d_45/kernel:0)
+  %batch_norm_output_buffer68 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output68, %scale68, %bias68, %mean68, %var68)
+  %activation_45/Relu:0 = Relu(%batch_norm_output_buffer68)
+  %convolution_output60 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_45/Relu:0, %conv2d_46/kernel:0)
+  %batch_norm_output_buffer60 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output60, %scale60, %bias60, %mean60, %var60)
+  %activation_46/Relu:0 = Relu(%batch_norm_output_buffer60)
+  %convolution_output54 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_46/Relu:0, %conv2d_47/kernel:0)
+  %batch_norm_output_buffer54 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output54, %scale54, %bias54, %mean54, %var54)
+  %activation_47/Relu:0 = Relu(%batch_norm_output_buffer54)
+  %convolution_output46 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_47/Relu:0, %conv2d_48/kernel:0)
+  %batch_norm_output_buffer46 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output46, %scale46, %bias46, %mean46, %var46)
+  %activation_48/Relu:0 = Relu(%batch_norm_output_buffer46)
+  %convolution_output53 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed4/concat:0, %conv2d_42/kernel:0)
+  %batch_norm_output_buffer53 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output53, %scale53, %bias53, %mean53, %var53)
+  %activation_42/Relu:0 = Relu(%batch_norm_output_buffer53)
+  %convolution_output45 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_42/Relu:0, %conv2d_43/kernel:0)
+  %batch_norm_output_buffer45 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output45, %scale45, %bias45, %mean45, %var45)
+  %activation_43/Relu:0 = Relu(%batch_norm_output_buffer45)
+  %mixed4/concat:0_pooling0 = AveragePool[auto_pad = 'SAME_UPPER', ceil_mode = 0, kernel_shape = [3, 3], strides = [1, 1]](%mixed4/concat:0)
+  %convolution_output41 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed4/concat:0_pooling0, %conv2d_50/kernel:0)
+  %convolution_output40 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_48/Relu:0, %conv2d_49/kernel:0)
+  %convolution_output39 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_43/Relu:0, %conv2d_44/kernel:0)
+  %convolution_output38 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed4/concat:0, %conv2d_41/kernel:0)
+  %batch_norm_output_buffer41 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output41, %scale41, %bias41, %mean41, %var41)
+  %batch_norm_output_buffer40 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output40, %scale40, %bias40, %mean40, %var40)
+  %batch_norm_output_buffer39 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output39, %scale39, %bias39, %mean39, %var39)
+  %batch_norm_output_buffer38 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output38, %scale38, %bias38, %mean38, %var38)
+  %activation_50/Relu:0 = Relu(%batch_norm_output_buffer41)
+  %activation_49/Relu:0 = Relu(%batch_norm_output_buffer40)
+  %activation_44/Relu:0 = Relu(%batch_norm_output_buffer39)
+  %activation_41/Relu:0 = Relu(%batch_norm_output_buffer38)
+  %mixed5/concat:0 = Concat[axis = 1](%activation_41/Relu:0, %activation_44/Relu:0, %activation_49/Relu:0, %activation_50/Relu:0)
+  %convolution_output59 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed5/concat:0, %conv2d_55/kernel:0)
+  %batch_norm_output_buffer59 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output59, %scale59, %bias59, %mean59, %var59)
+  %activation_55/Relu:0 = Relu(%batch_norm_output_buffer59)
+  %convolution_output52 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_55/Relu:0, %conv2d_56/kernel:0)
+  %batch_norm_output_buffer52 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output52, %scale52, %bias52, %mean52, %var52)
+  %activation_56/Relu:0 = Relu(%batch_norm_output_buffer52)
+  %convolution_output44 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_56/Relu:0, %conv2d_57/kernel:0)
+  %batch_norm_output_buffer44 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output44, %scale44, %bias44, %mean44, %var44)
+  %activation_57/Relu:0 = Relu(%batch_norm_output_buffer44)
+  %convolution_output37 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_57/Relu:0, %conv2d_58/kernel:0)
+  %batch_norm_output_buffer37 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output37, %scale37, %bias37, %mean37, %var37)
+  %activation_58/Relu:0 = Relu(%batch_norm_output_buffer37)
+  %convolution_output43 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed5/concat:0, %conv2d_52/kernel:0)
+  %batch_norm_output_buffer43 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output43, %scale43, %bias43, %mean43, %var43)
+  %activation_52/Relu:0 = Relu(%batch_norm_output_buffer43)
+  %convolution_output36 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_52/Relu:0, %conv2d_53/kernel:0)
+  %batch_norm_output_buffer36 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output36, %scale36, %bias36, %mean36, %var36)
+  %activation_53/Relu:0 = Relu(%batch_norm_output_buffer36)
+  %mixed5/concat:0_pooling0 = AveragePool[auto_pad = 'SAME_UPPER', ceil_mode = 0, kernel_shape = [3, 3], strides = [1, 1]](%mixed5/concat:0)
+  %convolution_output32 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed5/concat:0_pooling0, %conv2d_60/kernel:0)
+  %convolution_output31 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_58/Relu:0, %conv2d_59/kernel:0)
+  %convolution_output30 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_53/Relu:0, %conv2d_54/kernel:0)
+  %convolution_output29 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed5/concat:0, %conv2d_51/kernel:0)
+  %batch_norm_output_buffer32 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output32, %scale32, %bias32, %mean32, %var32)
+  %batch_norm_output_buffer31 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output31, %scale31, %bias31, %mean31, %var31)
+  %batch_norm_output_buffer30 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output30, %scale30, %bias30, %mean30, %var30)
+  %batch_norm_output_buffer29 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output29, %scale29, %bias29, %mean29, %var29)
+  %activation_60/Relu:0 = Relu(%batch_norm_output_buffer32)
+  %activation_59/Relu:0 = Relu(%batch_norm_output_buffer31)
+  %activation_54/Relu:0 = Relu(%batch_norm_output_buffer30)
+  %activation_51/Relu:0 = Relu(%batch_norm_output_buffer29)
+  %mixed6/concat:0 = Concat[axis = 1](%activation_51/Relu:0, %activation_54/Relu:0, %activation_59/Relu:0, %activation_60/Relu:0)
+  %convolution_output51 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed6/concat:0, %conv2d_65/kernel:0)
+  %batch_norm_output_buffer51 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output51, %scale51, %bias51, %mean51, %var51)
+  %activation_65/Relu:0 = Relu(%batch_norm_output_buffer51)
+  %convolution_output42 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_65/Relu:0, %conv2d_66/kernel:0)
+  %batch_norm_output_buffer42 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output42, %scale42, %bias42, %mean42, %var42)
+  %activation_66/Relu:0 = Relu(%batch_norm_output_buffer42)
+  %convolution_output34 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_66/Relu:0, %conv2d_67/kernel:0)
+  %batch_norm_output_buffer34 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output34, %scale34, %bias34, %mean34, %var34)
+  %activation_67/Relu:0 = Relu(%batch_norm_output_buffer34)
+  %convolution_output27 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_67/Relu:0, %conv2d_68/kernel:0)
+  %batch_norm_output_buffer27 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output27, %scale27, %bias27, %mean27, %var27)
+  %activation_68/Relu:0 = Relu(%batch_norm_output_buffer27)
+  %convolution_output33 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed6/concat:0, %conv2d_62/kernel:0)
+  %batch_norm_output_buffer33 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output33, %scale33, %bias33, %mean33, %var33)
+  %activation_62/Relu:0 = Relu(%batch_norm_output_buffer33)
+  %convolution_output26 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_62/Relu:0, %conv2d_63/kernel:0)
+  %batch_norm_output_buffer26 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output26, %scale26, %bias26, %mean26, %var26)
+  %activation_63/Relu:0 = Relu(%batch_norm_output_buffer26)
+  %mixed6/concat:0_pooling0 = AveragePool[auto_pad = 'SAME_UPPER', ceil_mode = 0, kernel_shape = [3, 3], strides = [1, 1]](%mixed6/concat:0)
+  %convolution_output22 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed6/concat:0_pooling0, %conv2d_70/kernel:0)
+  %convolution_output21 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_68/Relu:0, %conv2d_69/kernel:0)
+  %convolution_output20 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_63/Relu:0, %conv2d_64/kernel:0)
+  %convolution_output19 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed6/concat:0, %conv2d_61/kernel:0)
+  %batch_norm_output_buffer22 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output22, %scale22, %bias22, %mean22, %var22)
+  %batch_norm_output_buffer21 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output21, %scale21, %bias21, %mean21, %var21)
+  %batch_norm_output_buffer20 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output20, %scale20, %bias20, %mean20, %var20)
+  %batch_norm_output_buffer19 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output19, %scale19, %bias19, %mean19, %var19)
+  %activation_70/Relu:0 = Relu(%batch_norm_output_buffer22)
+  %activation_69/Relu:0 = Relu(%batch_norm_output_buffer21)
+  %activation_64/Relu:0 = Relu(%batch_norm_output_buffer20)
+  %activation_61/Relu:0 = Relu(%batch_norm_output_buffer19)
+  %mixed7/concat:0 = Concat[axis = 1](%activation_61/Relu:0, %activation_64/Relu:0, %activation_69/Relu:0, %activation_70/Relu:0)
+  %convolution_output35 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed7/concat:0, %conv2d_73/kernel:0)
+  %batch_norm_output_buffer35 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output35, %scale35, %bias35, %mean35, %var35)
+  %activation_73/Relu:0 = Relu(%batch_norm_output_buffer35)
+  %convolution_output28 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 7], pads = [0, 3, 0, 3], strides = [1, 1]](%activation_73/Relu:0, %conv2d_74/kernel:0)
+  %batch_norm_output_buffer28 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output28, %scale28, %bias28, %mean28, %var28)
+  %activation_74/Relu:0 = Relu(%batch_norm_output_buffer28)
+  %convolution_output24 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [7, 1], pads = [3, 0, 3, 0], strides = [1, 1]](%activation_74/Relu:0, %conv2d_75/kernel:0)
+  %batch_norm_output_buffer24 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output24, %scale24, %bias24, %mean24, %var24)
+  %activation_75/Relu:0 = Relu(%batch_norm_output_buffer24)
+  %convolution_output16 = Conv[auto_pad = 'VALID', dilations = [1, 1], group = 1, kernel_shape = [3, 3], strides = [2, 2]](%activation_75/Relu:0, %conv2d_76/kernel:0)
+  %convolution_output23 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed7/concat:0, %conv2d_71/kernel:0)
+  %batch_norm_output_buffer23 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output23, %scale23, %bias23, %mean23, %var23)
+  %activation_71/Relu:0 = Relu(%batch_norm_output_buffer23)
+  %convolution_output15 = Conv[auto_pad = 'VALID', dilations = [1, 1], group = 1, kernel_shape = [3, 3], strides = [2, 2]](%activation_71/Relu:0, %conv2d_72/kernel:0)
+  %batch_norm_output_buffer16 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output16, %scale16, %bias16, %mean16, %var16)
+  %batch_norm_output_buffer15 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output15, %scale15, %bias15, %mean15, %var15)
+  %mixed7/concat:0_pooling0 = MaxPool[auto_pad = 'VALID', ceil_mode = 0, kernel_shape = [3, 3], strides = [2, 2]](%mixed7/concat:0)
+  %activation_76/Relu:0 = Relu(%batch_norm_output_buffer16)
+  %activation_72/Relu:0 = Relu(%batch_norm_output_buffer15)
+  %mixed8/concat:0 = Concat[axis = 1](%activation_72/Relu:0, %activation_76/Relu:0, %mixed7/concat:0_pooling0)
+  %convolution_output25 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed8/concat:0, %conv2d_81/kernel:0)
+  %batch_norm_output_buffer25 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output25, %scale25, %bias25, %mean25, %var25)
+  %activation_81/Relu:0 = Relu(%batch_norm_output_buffer25)
+  %convolution_output18 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 3], pads = [1, 1, 1, 1], strides = [1, 1]](%activation_81/Relu:0, %conv2d_82/kernel:0)
+  %batch_norm_output_buffer18 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output18, %scale18, %bias18, %mean18, %var18)
+  %activation_82/Relu:0 = Relu(%batch_norm_output_buffer18)
+  %convolution_output13 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 1], pads = [1, 0, 1, 0], strides = [1, 1]](%activation_82/Relu:0, %conv2d_84/kernel:0)
+  %convolution_output12 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 3], pads = [0, 1, 0, 1], strides = [1, 1]](%activation_82/Relu:0, %conv2d_83/kernel:0)
+  %convolution_output17 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed8/concat:0, %conv2d_78/kernel:0)
+  %batch_norm_output_buffer17 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output17, %scale17, %bias17, %mean17, %var17)
+  %activation_78/Relu:0 = Relu(%batch_norm_output_buffer17)
+  %convolution_output11 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 1], pads = [1, 0, 1, 0], strides = [1, 1]](%activation_78/Relu:0, %conv2d_80/kernel:0)
+  %convolution_output10 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 3], pads = [0, 1, 0, 1], strides = [1, 1]](%activation_78/Relu:0, %conv2d_79/kernel:0)
+  %mixed8/concat:0_pooling0 = AveragePool[auto_pad = 'SAME_UPPER', ceil_mode = 0, kernel_shape = [3, 3], strides = [1, 1]](%mixed8/concat:0)
+  %convolution_output7 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed8/concat:0_pooling0, %conv2d_85/kernel:0)
+  %batch_norm_output_buffer13 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output13, %scale13, %bias13, %mean13, %var13)
+  %batch_norm_output_buffer12 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output12, %scale12, %bias12, %mean12, %var12)
+  %batch_norm_output_buffer11 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output11, %scale11, %bias11, %mean11, %var11)
+  %batch_norm_output_buffer10 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output10, %scale10, %bias10, %mean10, %var10)
+  %convolution_output6 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed8/concat:0, %conv2d_77/kernel:0)
+  %batch_norm_output_buffer7 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output7, %scale7, %bias7, %mean7, %var7)
+  %activation_84/Relu:0 = Relu(%batch_norm_output_buffer13)
+  %activation_83/Relu:0 = Relu(%batch_norm_output_buffer12)
+  %activation_80/Relu:0 = Relu(%batch_norm_output_buffer11)
+  %activation_79/Relu:0 = Relu(%batch_norm_output_buffer10)
+  %batch_norm_output_buffer6 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output6, %scale6, %bias6, %mean6, %var6)
+  %activation_85/Relu:0 = Relu(%batch_norm_output_buffer7)
+  %concatenate_1/concat:0 = Concat[axis = 1](%activation_83/Relu:0, %activation_84/Relu:0)
+  %mixed9_0/concat:0 = Concat[axis = 1](%activation_79/Relu:0, %activation_80/Relu:0)
+  %activation_77/Relu:0 = Relu(%batch_norm_output_buffer6)
+  %mixed9/concat:0 = Concat[axis = 1](%activation_77/Relu:0, %mixed9_0/concat:0, %concatenate_1/concat:0, %activation_85/Relu:0)
+  %convolution_output14 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed9/concat:0, %conv2d_90/kernel:0)
+  %batch_norm_output_buffer14 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output14, %scale14, %bias14, %mean14, %var14)
+  %activation_90/Relu:0 = Relu(%batch_norm_output_buffer14)
+  %convolution_output9 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 3], pads = [1, 1, 1, 1], strides = [1, 1]](%activation_90/Relu:0, %conv2d_91/kernel:0)
+  %batch_norm_output_buffer9 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output9, %scale9, %bias9, %mean9, %var9)
+  %activation_91/Relu:0 = Relu(%batch_norm_output_buffer9)
+  %convolution_output5 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 1], pads = [1, 0, 1, 0], strides = [1, 1]](%activation_91/Relu:0, %conv2d_93/kernel:0)
+  %convolution_output4 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 3], pads = [0, 1, 0, 1], strides = [1, 1]](%activation_91/Relu:0, %conv2d_92/kernel:0)
+  %convolution_output8 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed9/concat:0, %conv2d_87/kernel:0)
+  %batch_norm_output_buffer8 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output8, %scale8, %bias8, %mean8, %var8)
+  %activation_87/Relu:0 = Relu(%batch_norm_output_buffer8)
+  %convolution_output3 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [3, 1], pads = [1, 0, 1, 0], strides = [1, 1]](%activation_87/Relu:0, %conv2d_89/kernel:0)
+  %convolution_output2 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 3], pads = [0, 1, 0, 1], strides = [1, 1]](%activation_87/Relu:0, %conv2d_88/kernel:0)
+  %mixed9/concat:0_pooling0 = AveragePool[auto_pad = 'SAME_UPPER', ceil_mode = 0, kernel_shape = [3, 3], strides = [1, 1]](%mixed9/concat:0)
+  %convolution_output1 = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed9/concat:0_pooling0, %conv2d_94/kernel:0)
+  %batch_norm_output_buffer5 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output5, %scale5, %bias5, %mean5, %var5)
+  %batch_norm_output_buffer4 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output4, %scale4, %bias4, %mean4, %var4)
+  %batch_norm_output_buffer3 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output3, %scale3, %bias3, %mean3, %var3)
+  %batch_norm_output_buffer2 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output2, %scale2, %bias2, %mean2, %var2)
+  %convolution_output = Conv[auto_pad = 'NOTSET', dilations = [1, 1], group = 1, kernel_shape = [1, 1], pads = [0, 0, 0, 0], strides = [1, 1]](%mixed9/concat:0, %conv2d_86/kernel:0)
+  %batch_norm_output_buffer1 = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output1, %scale1, %bias1, %mean1, %var1)
+  %activation_93/Relu:0 = Relu(%batch_norm_output_buffer5)
+  %activation_92/Relu:0 = Relu(%batch_norm_output_buffer4)
+  %activation_89/Relu:0 = Relu(%batch_norm_output_buffer3)
+  %activation_88/Relu:0 = Relu(%batch_norm_output_buffer2)
+  %batch_norm_output_buffer = BatchNormalization[epsilon = 9.99999997475243e-07, momentum = 0.990000009536743](%convolution_output, %scale, %bias, %mean, %var)
+  %activation_94/Relu:0 = Relu(%batch_norm_output_buffer1)
+  %concatenate_2/concat:0 = Concat[axis = 1](%activation_92/Relu:0, %activation_93/Relu:0)
+  %mixed9_1/concat:0 = Concat[axis = 1](%activation_88/Relu:0, %activation_89/Relu:0)
+  %activation_86/Relu:0 = Relu(%batch_norm_output_buffer)
+  %mixed10/concat:0 = Concat[axis = 1](%activation_86/Relu:0, %mixed9_1/concat:0, %concatenate_2/concat:0, %activation_94/Relu:0)
+  %mixed10/concat:0_pooling0 = GlobalAveragePool(%mixed10/concat:0)
+  %mixed10/concat:0_transpose0 = Transpose[perm = [0, 2, 3, 1]](%mixed10/concat:0_pooling0)
+  %mixed10/concat:0_reshape0 = Reshape(%mixed10/concat:0_transpose0, %mixed10/concat:0_reshape_start)
+  %transformed_tensor = MatMul(%mixed10/concat:0_reshape0, %predictions/kernel:0)
+  %biased_tensor_name = Add(%transformed_tensor, %predictions/bias:0)
+  %predictions/Softmax:01 = Softmax[axis = -1](%biased_tensor_name)
+  %predictions = Identity(%predictions/Softmax:01)
+  return %predictions
+}

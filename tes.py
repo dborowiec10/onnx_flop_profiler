@@ -41,28 +41,28 @@ keras_app_models = [
     #     'model_fun': keras.applications.ResNet101V2,
     #     'classes': 1000,
     # },
-    {
-        'name': 'resnet152v2',
-        'model_fun': keras.applications.ResNet152V2,
-        'shape': (244, 244, 3),
-        'classes': 1000,
-    },
-    {
-        'name': 'inceptionv3',
-        'model_fun': keras.applications.InceptionV3,
-        'classes': 1000,
-    },
+    # {
+    #     'name': 'resnet152v2',
+    #     'model_fun': keras.applications.ResNet152V2,
+    #     'shape': (244, 244, 3),
+    #     'classes': 1000,
+    # },
+    # {
+    #     'name': 'inceptionv3',
+    #     'model_fun': keras.applications.InceptionV3,
+    #     'classes': 1000,
+    # },
     
-    {
-        'name': 'inception_resnetv2',
-        'model_fun': keras.applications.InceptionResNetV2,
-        'classes': 1000,
-    },
-    {
-        'name': 'xception',
-        'model_fun': keras.applications.Xception,
-        'classes': 1000,
-    },
+    # {
+    #     'name': 'inception_resnetv2',
+    #     'model_fun': keras.applications.InceptionResNetV2,
+    #     'classes': 1000,
+    # },
+    # {
+    #     'name': 'xception',
+    #     'model_fun': keras.applications.Xception,
+    #     'classes': 1000,
+    # },
     {
         'name': 'mobilenet_alpha_0.25',
         'model_fun': keras.applications.MobileNet,
@@ -152,14 +152,16 @@ keras_app_models = [
 
 for m in keras_app_models:
     shape = (224, 224, 3)
+    weights = None
+    # weights = 'imagenet'
     if 'shape' in m:
         shape = m['shape']
 
     inputs = keras.layers.Input(shape=shape)
     if 'alpha' in m:
-        model = m['model_fun'](weights='imagenet', input_tensor=inputs, input_shape=shape, classes=m["classes"], backend=keras.backend, alpha=m['alpha'])
+        model = m['model_fun'](weights=weights, input_tensor=inputs, input_shape=shape, classes=m["classes"], backend=keras.backend, alpha=m['alpha'])
     else:
-        model = m['model_fun'](weights='imagenet', input_tensor=inputs, input_shape=shape, classes=m["classes"], backend=keras.backend)
+        model = m['model_fun'](weights=weights, input_tensor=inputs, input_shape=shape, classes=m["classes"], backend=keras.backend)
     onnx_model = keras2onnx.convert_keras(model, m['name'])
     graph = helper.printable_graph(onnx_model.graph)
     with open("imagenet" + "_" + m["name"] + ".graph", 'w') as _file:
