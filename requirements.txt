@@ -1,0 +1,7 @@
+tensorflow == 2.1.0
+keras == 2.3.1
+keras_applications == 1.0.8
+onnx == 1.6.0
+-e git+https://github.com/microsoft/onnxconverter-common@v1.6.5#egg=onnxconverter-common
+-e git+https://github.com/onnx/keras-onnx@v1.6.5#egg=keras2onnx
+

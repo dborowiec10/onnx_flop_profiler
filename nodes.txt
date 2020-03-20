@@ -1,0 +1,2728 @@
+input: "input_12"
+output: "input_12:01_permuted"
+name: "Transpose119"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+doc_string: ""
+domain: ""
+input: "input_12:01_permuted"
+input: "Pad4_pads"
+input: "Pad4_value"
+output: "input_12:01_permuted_padded"
+name: "Pad4"
+op_type: "Pad"
+attribute {
+  name: "mode"
+  s: "constant"
+  type: STRING
+}
+domain: ""
+input: "input_12:01_permuted_padded"
+input: "conv1_1/kernel:0"
+output: "convolution_output27"
+name: "conv1"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "VALID"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 2
+  ints: 2
+  type: INTS
+}
+doc_string: ""
+domain: ""
+input: "convolution_output27"
+input: "scale26"
+input: "bias26"
+input: "mean26"
+input: "var26"
+output: "batch_norm_output_buffer26"
+name: "conv1_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer26"
+output: "conv1_bn_2/cond/Identity:0"
+name: "Transpose116"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv1_bn_2/cond/Identity:0"
+input: "clip_min26"
+input: "clip_max26"
+output: "conv1_relu_2/Relu6:0"
+name: "conv1_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv1_relu_2/Relu6:0"
+output: "adjusted_input26"
+name: "Transpose113"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input26"
+input: "conv_dw_1/depthwise_kernel:0"
+output: "convolution_output26"
+name: "conv_dw_1"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 8
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 1
+  ints: 1
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output26"
+input: "scale25"
+input: "bias25"
+input: "mean25"
+input: "var25"
+output: "batch_norm_output_buffer25"
+name: "conv_dw_1_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer25"
+output: "conv_dw_1_bn/cond/Identity:0"
+name: "Transpose112"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_1_bn/cond/Identity:0"
+input: "clip_min25"
+input: "clip_max25"
+output: "conv_dw_1_relu/Relu6:0"
+name: "conv_dw_1_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_1_relu/Relu6:0"
+output: "adjusted_input25"
+name: "Transpose109"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input25"
+input: "conv_pw_1/kernel:0"
+output: "convolution_output25"
+name: "conv_pw_1"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output25"
+input: "scale24"
+input: "bias24"
+input: "mean24"
+input: "var24"
+output: "batch_norm_output_buffer24"
+name: "conv_pw_1_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer24"
+output: "conv_pw_1_bn/cond/Identity:0"
+name: "Transpose108"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_1_bn/cond/Identity:0"
+input: "clip_min24"
+input: "clip_max24"
+output: "conv_pw_1_relu/Relu6:0"
+name: "conv_pw_1_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_1_relu/Relu6:0"
+output: "conv_pw_1_relu/Relu6:0_permuted"
+name: "Transpose105"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "conv_pw_1_relu/Relu6:0_permuted"
+input: "Pad3_pads"
+input: "Pad3_value"
+output: "conv_pw_1_relu/Relu6:0_permuted_padded"
+name: "Pad3"
+op_type: "Pad"
+attribute {
+  name: "mode"
+  s: "constant"
+  type: STRING
+}
+domain: ""
+input: "conv_pw_1_relu/Relu6:0_permuted_padded"
+input: "conv_dw_2/depthwise_kernel:0"
+output: "convolution_output24"
+name: "conv_dw_2"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "VALID"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 16
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 2
+  ints: 2
+  type: INTS
+}
+doc_string: ""
+domain: ""
+input: "convolution_output24"
+input: "scale23"
+input: "bias23"
+input: "mean23"
+input: "var23"
+output: "batch_norm_output_buffer23"
+name: "conv_dw_2_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer23"
+output: "conv_dw_2_bn/cond/Identity:0"
+name: "Transpose102"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_2_bn/cond/Identity:0"
+input: "clip_min23"
+input: "clip_max23"
+output: "conv_dw_2_relu/Relu6:0"
+name: "conv_dw_2_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_2_relu/Relu6:0"
+output: "adjusted_input23"
+name: "Transpose99"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input23"
+input: "conv_pw_2/kernel:0"
+output: "convolution_output23"
+name: "conv_pw_2"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output23"
+input: "scale22"
+input: "bias22"
+input: "mean22"
+input: "var22"
+output: "batch_norm_output_buffer22"
+name: "conv_pw_2_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer22"
+output: "conv_pw_2_bn/cond/Identity:0"
+name: "Transpose98"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_2_bn/cond/Identity:0"
+input: "clip_min22"
+input: "clip_max22"
+output: "conv_pw_2_relu/Relu6:0"
+name: "conv_pw_2_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_2_relu/Relu6:0"
+output: "adjusted_input22"
+name: "Transpose95"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input22"
+input: "conv_dw_3/depthwise_kernel:0"
+output: "convolution_output22"
+name: "conv_dw_3"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 32
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 1
+  ints: 1
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output22"
+input: "scale21"
+input: "bias21"
+input: "mean21"
+input: "var21"
+output: "batch_norm_output_buffer21"
+name: "conv_dw_3_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer21"
+output: "conv_dw_3_bn/cond/Identity:0"
+name: "Transpose94"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_3_bn/cond/Identity:0"
+input: "clip_min21"
+input: "clip_max21"
+output: "conv_dw_3_relu/Relu6:0"
+name: "conv_dw_3_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_3_relu/Relu6:0"
+output: "adjusted_input21"
+name: "Transpose91"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input21"
+input: "conv_pw_3/kernel:0"
+output: "convolution_output21"
+name: "conv_pw_3"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output21"
+input: "scale20"
+input: "bias20"
+input: "mean20"
+input: "var20"
+output: "batch_norm_output_buffer20"
+name: "conv_pw_3_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer20"
+output: "conv_pw_3_bn/cond/Identity:0"
+name: "Transpose90"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_3_bn/cond/Identity:0"
+input: "clip_min20"
+input: "clip_max20"
+output: "conv_pw_3_relu/Relu6:0"
+name: "conv_pw_3_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_3_relu/Relu6:0"
+output: "conv_pw_3_relu/Relu6:0_permuted"
+name: "Transpose87"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "conv_pw_3_relu/Relu6:0_permuted"
+input: "Pad2_pads"
+input: "Pad2_value"
+output: "conv_pw_3_relu/Relu6:0_permuted_padded"
+name: "Pad2"
+op_type: "Pad"
+attribute {
+  name: "mode"
+  s: "constant"
+  type: STRING
+}
+domain: ""
+input: "conv_pw_3_relu/Relu6:0_permuted_padded"
+input: "conv_dw_4/depthwise_kernel:0"
+output: "convolution_output20"
+name: "conv_dw_4"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "VALID"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 32
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 2
+  ints: 2
+  type: INTS
+}
+doc_string: ""
+domain: ""
+input: "convolution_output20"
+input: "scale19"
+input: "bias19"
+input: "mean19"
+input: "var19"
+output: "batch_norm_output_buffer19"
+name: "conv_dw_4_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer19"
+output: "conv_dw_4_bn/cond/Identity:0"
+name: "Transpose84"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_4_bn/cond/Identity:0"
+input: "clip_min19"
+input: "clip_max19"
+output: "conv_dw_4_relu/Relu6:0"
+name: "conv_dw_4_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_4_relu/Relu6:0"
+output: "adjusted_input19"
+name: "Transpose81"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input19"
+input: "conv_pw_4/kernel:0"
+output: "convolution_output19"
+name: "conv_pw_4"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output19"
+input: "scale18"
+input: "bias18"
+input: "mean18"
+input: "var18"
+output: "batch_norm_output_buffer18"
+name: "conv_pw_4_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer18"
+output: "conv_pw_4_bn/cond/Identity:0"
+name: "Transpose80"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_4_bn/cond/Identity:0"
+input: "clip_min18"
+input: "clip_max18"
+output: "conv_pw_4_relu/Relu6:0"
+name: "conv_pw_4_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_4_relu/Relu6:0"
+output: "adjusted_input18"
+name: "Transpose77"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input18"
+input: "conv_dw_5/depthwise_kernel:0"
+output: "convolution_output18"
+name: "conv_dw_5"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 64
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 1
+  ints: 1
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output18"
+input: "scale17"
+input: "bias17"
+input: "mean17"
+input: "var17"
+output: "batch_norm_output_buffer17"
+name: "conv_dw_5_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer17"
+output: "conv_dw_5_bn/cond/Identity:0"
+name: "Transpose76"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_5_bn/cond/Identity:0"
+input: "clip_min17"
+input: "clip_max17"
+output: "conv_dw_5_relu/Relu6:0"
+name: "conv_dw_5_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_5_relu/Relu6:0"
+output: "adjusted_input17"
+name: "Transpose73"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input17"
+input: "conv_pw_5/kernel:0"
+output: "convolution_output17"
+name: "conv_pw_5"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output17"
+input: "scale16"
+input: "bias16"
+input: "mean16"
+input: "var16"
+output: "batch_norm_output_buffer16"
+name: "conv_pw_5_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer16"
+output: "conv_pw_5_bn/cond/Identity:0"
+name: "Transpose72"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_5_bn/cond/Identity:0"
+input: "clip_min16"
+input: "clip_max16"
+output: "conv_pw_5_relu/Relu6:0"
+name: "conv_pw_5_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_5_relu/Relu6:0"
+output: "conv_pw_5_relu/Relu6:0_permuted"
+name: "Transpose69"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "conv_pw_5_relu/Relu6:0_permuted"
+input: "Pad1_pads"
+input: "Pad1_value"
+output: "conv_pw_5_relu/Relu6:0_permuted_padded"
+name: "Pad1"
+op_type: "Pad"
+attribute {
+  name: "mode"
+  s: "constant"
+  type: STRING
+}
+domain: ""
+input: "conv_pw_5_relu/Relu6:0_permuted_padded"
+input: "conv_dw_6/depthwise_kernel:0"
+output: "convolution_output16"
+name: "conv_dw_6"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "VALID"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 64
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 2
+  ints: 2
+  type: INTS
+}
+doc_string: ""
+domain: ""
+input: "convolution_output16"
+input: "scale15"
+input: "bias15"
+input: "mean15"
+input: "var15"
+output: "batch_norm_output_buffer15"
+name: "conv_dw_6_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer15"
+output: "conv_dw_6_bn/cond/Identity:0"
+name: "Transpose66"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_6_bn/cond/Identity:0"
+input: "clip_min15"
+input: "clip_max15"
+output: "conv_dw_6_relu/Relu6:0"
+name: "conv_dw_6_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_6_relu/Relu6:0"
+output: "adjusted_input15"
+name: "Transpose63"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input15"
+input: "conv_pw_6/kernel:0"
+output: "convolution_output15"
+name: "conv_pw_6"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output15"
+input: "scale14"
+input: "bias14"
+input: "mean14"
+input: "var14"
+output: "batch_norm_output_buffer14"
+name: "conv_pw_6_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer14"
+output: "conv_pw_6_bn/cond/Identity:0"
+name: "Transpose62"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_6_bn/cond/Identity:0"
+input: "clip_min14"
+input: "clip_max14"
+output: "conv_pw_6_relu/Relu6:0"
+name: "conv_pw_6_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_6_relu/Relu6:0"
+output: "adjusted_input14"
+name: "Transpose59"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input14"
+input: "conv_dw_7/depthwise_kernel:0"
+output: "convolution_output14"
+name: "conv_dw_7"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 128
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 1
+  ints: 1
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output14"
+input: "scale13"
+input: "bias13"
+input: "mean13"
+input: "var13"
+output: "batch_norm_output_buffer13"
+name: "conv_dw_7_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer13"
+output: "conv_dw_7_bn/cond/Identity:0"
+name: "Transpose58"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_7_bn/cond/Identity:0"
+input: "clip_min13"
+input: "clip_max13"
+output: "conv_dw_7_relu/Relu6:0"
+name: "conv_dw_7_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_7_relu/Relu6:0"
+output: "adjusted_input13"
+name: "Transpose55"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input13"
+input: "conv_pw_7/kernel:0"
+output: "convolution_output13"
+name: "conv_pw_7"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output13"
+input: "scale12"
+input: "bias12"
+input: "mean12"
+input: "var12"
+output: "batch_norm_output_buffer12"
+name: "conv_pw_7_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer12"
+output: "conv_pw_7_bn/cond/Identity:0"
+name: "Transpose54"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_7_bn/cond/Identity:0"
+input: "clip_min12"
+input: "clip_max12"
+output: "conv_pw_7_relu/Relu6:0"
+name: "conv_pw_7_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_7_relu/Relu6:0"
+output: "adjusted_input12"
+name: "Transpose51"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input12"
+input: "conv_dw_8/depthwise_kernel:0"
+output: "convolution_output12"
+name: "conv_dw_8"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 128
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 1
+  ints: 1
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output12"
+input: "scale11"
+input: "bias11"
+input: "mean11"
+input: "var11"
+output: "batch_norm_output_buffer11"
+name: "conv_dw_8_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer11"
+output: "conv_dw_8_bn/cond/Identity:0"
+name: "Transpose50"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_8_bn/cond/Identity:0"
+input: "clip_min11"
+input: "clip_max11"
+output: "conv_dw_8_relu/Relu6:0"
+name: "conv_dw_8_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_8_relu/Relu6:0"
+output: "adjusted_input11"
+name: "Transpose47"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input11"
+input: "conv_pw_8/kernel:0"
+output: "convolution_output11"
+name: "conv_pw_8"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output11"
+input: "scale10"
+input: "bias10"
+input: "mean10"
+input: "var10"
+output: "batch_norm_output_buffer10"
+name: "conv_pw_8_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer10"
+output: "conv_pw_8_bn/cond/Identity:0"
+name: "Transpose46"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_8_bn/cond/Identity:0"
+input: "clip_min10"
+input: "clip_max10"
+output: "conv_pw_8_relu/Relu6:0"
+name: "conv_pw_8_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_8_relu/Relu6:0"
+output: "adjusted_input10"
+name: "Transpose43"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input10"
+input: "conv_dw_9/depthwise_kernel:0"
+output: "convolution_output10"
+name: "conv_dw_9"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 128
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 1
+  ints: 1
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output10"
+input: "scale9"
+input: "bias9"
+input: "mean9"
+input: "var9"
+output: "batch_norm_output_buffer9"
+name: "conv_dw_9_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer9"
+output: "conv_dw_9_bn/cond/Identity:0"
+name: "Transpose42"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_9_bn/cond/Identity:0"
+input: "clip_min9"
+input: "clip_max9"
+output: "conv_dw_9_relu/Relu6:0"
+name: "conv_dw_9_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_9_relu/Relu6:0"
+output: "adjusted_input9"
+name: "Transpose39"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input9"
+input: "conv_pw_9/kernel:0"
+output: "convolution_output9"
+name: "conv_pw_9"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output9"
+input: "scale8"
+input: "bias8"
+input: "mean8"
+input: "var8"
+output: "batch_norm_output_buffer8"
+name: "conv_pw_9_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer8"
+output: "conv_pw_9_bn/cond/Identity:0"
+name: "Transpose38"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_9_bn/cond/Identity:0"
+input: "clip_min8"
+input: "clip_max8"
+output: "conv_pw_9_relu/Relu6:0"
+name: "conv_pw_9_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_9_relu/Relu6:0"
+output: "adjusted_input8"
+name: "Transpose35"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input8"
+input: "conv_dw_10/depthwise_kernel:0"
+output: "convolution_output8"
+name: "conv_dw_10"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 128
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 1
+  ints: 1
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output8"
+input: "scale7"
+input: "bias7"
+input: "mean7"
+input: "var7"
+output: "batch_norm_output_buffer7"
+name: "conv_dw_10_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer7"
+output: "conv_dw_10_bn/cond/Identity:0"
+name: "Transpose34"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_10_bn/cond/Identity:0"
+input: "clip_min7"
+input: "clip_max7"
+output: "conv_dw_10_relu/Relu6:0"
+name: "conv_dw_10_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_10_relu/Relu6:0"
+output: "adjusted_input7"
+name: "Transpose31"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input7"
+input: "conv_pw_10/kernel:0"
+output: "convolution_output7"
+name: "conv_pw_10"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output7"
+input: "scale6"
+input: "bias6"
+input: "mean6"
+input: "var6"
+output: "batch_norm_output_buffer6"
+name: "conv_pw_10_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer6"
+output: "conv_pw_10_bn/cond/Identity:0"
+name: "Transpose30"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_10_bn/cond/Identity:0"
+input: "clip_min6"
+input: "clip_max6"
+output: "conv_pw_10_relu/Relu6:0"
+name: "conv_pw_10_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_10_relu/Relu6:0"
+output: "adjusted_input6"
+name: "Transpose27"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input6"
+input: "conv_dw_11/depthwise_kernel:0"
+output: "convolution_output6"
+name: "conv_dw_11"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 128
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 1
+  ints: 1
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output6"
+input: "scale5"
+input: "bias5"
+input: "mean5"
+input: "var5"
+output: "batch_norm_output_buffer5"
+name: "conv_dw_11_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer5"
+output: "conv_dw_11_bn/cond/Identity:0"
+name: "Transpose26"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_11_bn/cond/Identity:0"
+input: "clip_min5"
+input: "clip_max5"
+output: "conv_dw_11_relu/Relu6:0"
+name: "conv_dw_11_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_11_relu/Relu6:0"
+output: "adjusted_input5"
+name: "Transpose23"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input5"
+input: "conv_pw_11/kernel:0"
+output: "convolution_output5"
+name: "conv_pw_11"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output5"
+input: "scale4"
+input: "bias4"
+input: "mean4"
+input: "var4"
+output: "batch_norm_output_buffer4"
+name: "conv_pw_11_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer4"
+output: "conv_pw_11_bn/cond/Identity:0"
+name: "Transpose22"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_11_bn/cond/Identity:0"
+input: "clip_min4"
+input: "clip_max4"
+output: "conv_pw_11_relu/Relu6:0"
+name: "conv_pw_11_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_11_relu/Relu6:0"
+output: "conv_pw_11_relu/Relu6:0_permuted"
+name: "Transpose19"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "conv_pw_11_relu/Relu6:0_permuted"
+input: "Pad_pads"
+input: "Pad_value"
+output: "conv_pw_11_relu/Relu6:0_permuted_padded"
+name: "Pad"
+op_type: "Pad"
+attribute {
+  name: "mode"
+  s: "constant"
+  type: STRING
+}
+domain: ""
+input: "conv_pw_11_relu/Relu6:0_permuted_padded"
+input: "conv_dw_12/depthwise_kernel:0"
+output: "convolution_output4"
+name: "conv_dw_12"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "VALID"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 128
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 2
+  ints: 2
+  type: INTS
+}
+doc_string: ""
+domain: ""
+input: "convolution_output4"
+input: "scale3"
+input: "bias3"
+input: "mean3"
+input: "var3"
+output: "batch_norm_output_buffer3"
+name: "conv_dw_12_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer3"
+output: "conv_dw_12_bn/cond/Identity:0"
+name: "Transpose16"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_12_bn/cond/Identity:0"
+input: "clip_min3"
+input: "clip_max3"
+output: "conv_dw_12_relu/Relu6:0"
+name: "conv_dw_12_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_12_relu/Relu6:0"
+output: "adjusted_input3"
+name: "Transpose13"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input3"
+input: "conv_pw_12/kernel:0"
+output: "convolution_output3"
+name: "conv_pw_12"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output3"
+input: "scale2"
+input: "bias2"
+input: "mean2"
+input: "var2"
+output: "batch_norm_output_buffer2"
+name: "conv_pw_12_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer2"
+output: "conv_pw_12_bn/cond/Identity:0"
+name: "Transpose12"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_12_bn/cond/Identity:0"
+input: "clip_min2"
+input: "clip_max2"
+output: "conv_pw_12_relu/Relu6:0"
+name: "conv_pw_12_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_12_relu/Relu6:0"
+output: "adjusted_input2"
+name: "Transpose9"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input2"
+input: "conv_dw_13/depthwise_kernel:0"
+output: "convolution_output2"
+name: "conv_dw_13"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 256
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 3
+  ints: 3
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 1
+  ints: 1
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output2"
+input: "scale1"
+input: "bias1"
+input: "mean1"
+input: "var1"
+output: "batch_norm_output_buffer1"
+name: "conv_dw_13_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer1"
+output: "conv_dw_13_bn/cond/Identity:0"
+name: "Transpose8"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_dw_13_bn/cond/Identity:0"
+input: "clip_min1"
+input: "clip_max1"
+output: "conv_dw_13_relu/Relu6:0"
+name: "conv_dw_13_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_dw_13_relu/Relu6:0"
+output: "adjusted_input1"
+name: "Transpose5"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "adjusted_input1"
+input: "conv_pw_13/kernel:0"
+output: "convolution_output1"
+name: "conv_pw_13"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output1"
+input: "scale"
+input: "bias"
+input: "mean"
+input: "var"
+output: "batch_norm_output_buffer"
+name: "conv_pw_13_bn"
+op_type: "BatchNormalization"
+attribute {
+  name: "epsilon"
+  f: 9.999999974752427e-07
+  type: FLOAT
+}
+attribute {
+  name: "momentum"
+  f: 0.9900000095367432
+  type: FLOAT
+}
+doc_string: ""
+domain: ""
+input: "batch_norm_output_buffer"
+output: "conv_pw_13_bn/cond/Identity:0"
+name: "Transpose4"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_13_bn/cond/Identity:0"
+input: "clip_min"
+input: "clip_max"
+output: "conv_pw_13_relu/Relu6:0"
+name: "conv_pw_13_relu_clip"
+op_type: "Clip"
+domain: ""
+input: "conv_pw_13_relu/Relu6:0"
+output: "input_transposed"
+name: "Transpose2"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+domain: ""
+input: "input_transposed"
+output: "conv_pw_13_relu/Relu6:0_pooling0"
+name: "conv_pw_13_relu/Relu6:0_pooling"
+op_type: "GlobalAveragePool"
+domain: ""
+input: "conv_pw_13_relu/Relu6:0_pooling0"
+output: "conv_pw_13_relu/Relu6:0_transpose0"
+name: "conv_pw_13_relu/Relu6:0_transpose"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "conv_pw_13_relu/Relu6:0_transpose0"
+input: "conv_pw_13_relu/Relu6:0_reshape_start"
+output: "conv_pw_13_relu/Relu6:0_reshape0"
+name: "conv_pw_13_relu/Relu6:0_reshape"
+op_type: "Reshape"
+domain: ""
+input: "conv_pw_13_relu/Relu6:0_reshape0"
+input: "shape_tensor1"
+output: "reshape_1/Reshape:0"
+name: "reshape_1"
+op_type: "Reshape"
+doc_string: ""
+domain: ""
+input: "reshape_1/Reshape:0"
+output: "adjusted_input"
+name: "Transpose"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 3
+  ints: 1
+  ints: 2
+  type: INTS
+}
+doc_string: ""
+domain: ""
+input: "adjusted_input"
+input: "conv_preds/kernel:0"
+input: "conv_preds/bias:0"
+output: "convolution_output"
+name: "conv_preds"
+op_type: "Conv"
+attribute {
+  name: "auto_pad"
+  s: "NOTSET"
+  type: STRING
+}
+attribute {
+  name: "dilations"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "group"
+  i: 1
+  type: INT
+}
+attribute {
+  name: "kernel_shape"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+attribute {
+  name: "pads"
+  ints: 0
+  ints: 0
+  ints: 0
+  ints: 0
+  type: INTS
+}
+attribute {
+  name: "strides"
+  ints: 1
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "convolution_output"
+output: "transpose_output"
+name: "Transpose1"
+op_type: "Transpose"
+attribute {
+  name: "perm"
+  ints: 0
+  ints: 2
+  ints: 3
+  ints: 1
+  type: INTS
+}
+domain: ""
+input: "transpose_output"
+input: "shape_tensor"
+output: "reshape_2/Reshape:0"
+name: "reshape_2"
+op_type: "Reshape"
+doc_string: ""
+domain: ""
+input: "reshape_2/Reshape:0"
+output: "act_softmax/Softmax:01"
+name: "Softmax"
+op_type: "Softmax"
+attribute {
+  name: "axis"
+  i: -1
+  type: INT
+}
+domain: ""
+input: "act_softmax/Softmax:01"
+output: "act_softmax"
+name: "Identity5"
+op_type: "Identity"
+doc_string: ""
+domain: ""

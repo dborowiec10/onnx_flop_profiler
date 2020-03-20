@@ -1,1 +1,3 @@
 *.onnx
+src/**
+__pycache__
