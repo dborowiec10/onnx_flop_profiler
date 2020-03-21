@@ -1,10 +1,13 @@
 from absl import app
 from absl import flags
-import onnx
-from onnx import ModelProto
-from onnx import AttributeProto
+from os import walk
 from pprint import pprint
+import onnx
+from onnx import numpy_helper
+from onnx import helper
+
 from hooks import hook
+
 
 model_inputs = {}
 model_initializers = {}
@@ -13,14 +16,35 @@ model_nodes = {}
 node_inputs_outputs = {}
 mod = None
 
+statistics = {}
+
 FLAGS = flags.FLAGS
-flags.DEFINE_string('input', 'models/imagenet_xception.onnx', 'The filename of the model in *.onnx format')
+flags.DEFINE_string('input', 'default', 'The filename of the model in *.onnx format')
+flags.DEFINE_boolean('test_all', False, 'whether to test all models in the ./models/ directory')
+flags.DEFINE_integer('batch_size', 1, 'assumed input data mini-batch size')
+flags.DEFINE_boolean('modify_batch_size', True, 'Whether to modify the mini-batch size on model input. Modifies to <batch_size>')
+
+
+# adds towards accumulated footprint for an operation
+def add_footprint(op_type, footprint):
+    if op_type not in statistics:
+        statistics[op_type] = footprint
+    else:
+        statistics[op_type]["operations"]["flops"] += footprint["operations"]["flops"]
+        statistics[op_type]["operations"]["multiply_adds"] += footprint["operations"]["multiply_adds"]
+        statistics[op_type]["operations"]["computations"] += footprint["operations"]["computations"]
+        statistics[op_type]["operations"]["additions"] += footprint["operations"]["additions"]
+        statistics[op_type]["operations"]["divisions"] += footprint["operations"]["divisions"]
+        statistics[op_type]["operations"]["exponentials"] += footprint["operations"]["exponentials"]
+        statistics[op_type]["memory_footprint"]["parameters"] += footprint["memory_footprint"]["parameters"]
+        statistics[op_type]["memory_footprint"]["activations"] += footprint["memory_footprint"]["activations"]
+
 
 # adds or updates input output for model nodes
 # type of io - model_input, model_output, model_initializer, intermediary
 # producer - name of node which produced this io as output
 # consumer - name of node which consumed this io as input 
-def add_node_io(name, _type, producer=None, consumer=None):
+def add_node_io(name, _type, producer=None, consumer=None, data=None):
     nio = {}
     if name in node_inputs_outputs:
         nio = node_inputs_outputs[name]
@@ -29,7 +53,9 @@ def add_node_io(name, _type, producer=None, consumer=None):
         nio["producer"] = None
         nio["consumers"] = []
         nio["type"] = _type
-        nio["data"] = None
+        nio["data"] = data
+    if nio["data"] == None:
+        nio["data"] = data
     if producer != None:
         nio["producer"] = producer
     if consumer != None:
@@ -61,10 +87,31 @@ def get_identifier(name):
         return mod.graph.node[model_nodes[name]]
     return None
 
+def convert_tensor_shape_to_array(t):
+    arr = []
+    for d in t.type.tensor_type.shape.dim:
+        if d.dim_value != 0:
+            arr.append(d.dim_value)
+        else:
+            arr.append(d.dim_param)
+    return arr
 
 # initialize data structures
 def init(filename):
     global mod
+    global model_inputs
+    global model_initializers
+    global model_outputs
+    global model_nodes
+    global node_inputs_outputs
+
+    mod = None
+    model_inputs = {}
+    model_initializers = {}
+    model_outputs = {}
+    model_nodes = {}
+    node_inputs_outputs = {}
+    
     # load model
     mod = onnx.load(filename)    
     # gather model input(s)
@@ -82,59 +129,80 @@ def init(filename):
     # create node io link table
     for node in mod.graph.node:
         for nin in node.input:
+            shape = []
+            identifier = None
             _type = get_identifier_type(nin)
-            add_node_io(nin, _type, consumer=node.name)
+            if _type == "model_input":
+                id = get_identifier(nin)
+                shape = convert_tensor_shape_to_array(id)
+                # print(shape, numpy_helper.to_array(id))
+                if FLAGS.modify_batch_size:
+                    shape[0] = FLAGS.batch_size
+                identifier = id.name
+            add_node_io(nin, _type, consumer=node.name, data={
+                "shape": shape,
+                "identifier": identifier
+            })
+
         for nout in node.output:
+            shape = []
+            identifier = None
             _type = get_identifier_type(nout)
-            add_node_io(nout, _type, producer=node.name)
-
-# retrieve value of the attribute
-def get_attr_value(a):
-    return None if int(a.type) < 1 or int(a.type) > 12 else {
-        1: a.f,
-        2: a.i,
-        3: a.s,
-        4: a.t,
-        5: a.g,
-        6: a.floats,
-        7: a.ints,
-        8: a.strings,
-        9: a.tensors,
-        10: a.graphs,
-        11: a.sparse_tensor,
-        12: a.sparse_tensors
-    }[a.type]
-
+            if _type == "model_output":
+                id = get_identifier(nout)
+                shape = convert_tensor_shape_to_array(id)
+                if FLAGS.modify_batch_size:
+                    shape[0] = FLAGS.batch_size
+                identifier = id.name
+            add_node_io(nout, _type, producer=node.name, data={
+                "shape": shape,
+                "identifier": identifier
+            })
 
 def run():
     global mod
     for node in mod.graph.node:
+        # print("****************************** Performing node:", node.name)
         hook_fun = hook[node.op_type] if node.op_type in hook else None
         if hook_fun != None:
             _inputs = []
             _outputs = []
             _attributes = {}
             for inp in node.input:
-                ident = get_identifier(inp)
-                if ident != None:
-                    node_inputs_outputs[inp]["data"] = ident
-                _inputs.append(node_inputs_outputs[inp])
+                io = node_inputs_outputs[inp]
+                if io["data"]["identifier"] not in model_inputs:
+                    io["data"]["identifier"] = get_identifier(inp)
+                _inputs.append(io)
             for out in node.output:
-                ident = get_identifier(out)
-                if ident != None:
-                    node_inputs_outputs[out]["data"] = ident
-                _outputs.append(node_inputs_outputs[out])
+                io = node_inputs_outputs[out]
+                if io["data"]["identifier"] not in model_outputs:
+                    io["data"]["identifier"] = get_identifier(out)
+                _outputs.append(io)
             for a in node.attribute:
-                _attributes[a.name] = get_attr_value(a)
-            retval = hook[node.op_type](_inputs, _outputs, _attributes)
+                _attributes[a.name] = helper.get_attribute_value(a)
+            footprint = hook[node.op_type](_inputs, _outputs, _attributes)
+            add_footprint(node.op_type, footprint)
         else:
             print("Unsupported operation:", node.op_type)
 
 # main program function
 def main(argv):
     del argv
-    init(FLAGS.input)
+    f = []
+    for (_, _, filenames) in walk("./models"):
+        f.extend(filenames)
+        break
+    if FLAGS.test_all:
+        for md in f:
+            init("./models/" + md)
+            run()
+        return
+    elif FLAGS.input != "default":
+        init(FLAGS.input)
+    else:
+        init("./models/" + f[0])
     run()
+
 
 # entrypoint
 if __name__ == "__main__":
