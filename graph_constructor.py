@@ -32,13 +32,31 @@ def add_footprint(op_type, footprint):
     else:
         statistics[op_type]["operations"]["flops"] += footprint["operations"]["flops"]
         statistics[op_type]["operations"]["multiply_adds"] += footprint["operations"]["multiply_adds"]
-        statistics[op_type]["operations"]["computations"] += footprint["operations"]["computations"]
+        statistics[op_type]["operations"]["comps"] += footprint["operations"]["comps"]
         statistics[op_type]["operations"]["additions"] += footprint["operations"]["additions"]
         statistics[op_type]["operations"]["divisions"] += footprint["operations"]["divisions"]
         statistics[op_type]["operations"]["exponentials"] += footprint["operations"]["exponentials"]
-        statistics[op_type]["memory_footprint"]["parameters"] += footprint["memory_footprint"]["parameters"]
-        statistics[op_type]["memory_footprint"]["activations"] += footprint["memory_footprint"]["activations"]
+        statistics[op_type]["memory"]["parameters"] += footprint["memory"]["parameters"]
+        statistics[op_type]["memory"]["activations"] += footprint["memory"]["activations"]
+        statistics[op_type]["memory"]["other_memory"] += footprint["memory"]["other_memory"]
 
+# print statistics for the model
+def print_stats():
+    for key in statistics:
+        print("----------------------------------------")
+        print("Operation:", key)
+        print("-- Computations:")
+        print("-- -- FLOPs:", statistics[key]["operations"]["flops"])
+        print("-- -- MACCs:", statistics[key]["operations"]["multiply_adds"])
+        print("-- -- Comps:", statistics[key]["operations"]["comps"])
+        print("-- -- Additions:", statistics[key]["operations"]["additions"])
+        print("-- -- Divisions:", statistics[key]["operations"]["divisions"])
+        print("-- -- Exponentials:", statistics[key]["operations"]["exponentials"])
+        print("-- Memory:")
+        print("-- -- Parameters:", statistics[key]["memory"]["parameters"])
+        print("-- -- Activations:", statistics[key]["memory"]["activations"])
+        print("-- -- Other:", statistics[key]["memory"]["other_memory"])
+        print("----------------------------------------")
 
 # adds or updates input output for model nodes
 # type of io - model_input, model_output, model_initializer, intermediary
@@ -111,7 +129,7 @@ def init(filename):
     model_outputs = {}
     model_nodes = {}
     node_inputs_outputs = {}
-    
+    print(filename) 
     # load model
     mod = onnx.load(filename)    
     # gather model input(s)
@@ -135,7 +153,6 @@ def init(filename):
             if _type == "model_input":
                 id = get_identifier(nin)
                 shape = convert_tensor_shape_to_array(id)
-                # print(shape, numpy_helper.to_array(id))
                 if FLAGS.modify_batch_size:
                     shape[0] = FLAGS.batch_size
                 identifier = id.name
@@ -202,7 +219,7 @@ def main(argv):
     else:
         init("./models/" + f[0])
     run()
-
+    print_stats()
 
 # entrypoint
 if __name__ == "__main__":
