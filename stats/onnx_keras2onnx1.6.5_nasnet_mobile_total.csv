@@ -1,0 +1,5 @@
+Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name
+keras2onnx,1.6.5,onnx,models/imagenet_nasnet_mobile.onnx,nasnet_mobile
+,,,,
+operations_flops,operations_multiply_adds,operations_additions,operations_comparisons,operations_divisions,operations_exponentials,memory_activations,memory_parameters,memory_other_memory
+1127278631.0,563639316.0,14539531,10489419,4549587,1000,103096996,16931912.0,1611976

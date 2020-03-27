@@ -1,0 +1,5 @@
+Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name
+keras2onnx,1.6.5,onnx,models/imagenet_resnet50v2.onnx,resnet50v2
+,,,,
+operations_flops,operations_multiply_adds,operations_additions,operations_comparisons,operations_divisions,operations_exponentials,memory_activations,memory_parameters,memory_other_memory
+6964511719.0,3482255860.0,11730640,9320192,7163624,1000,96617184,94077440.0,1126320

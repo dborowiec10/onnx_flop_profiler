@@ -1,0 +1,5 @@
+Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name
+keras2onnx,1.6.5,onnx,models/imagenet_xception.onnx,xception
+,,,,
+operations_flops,operations_multiply_adds,operations_additions,operations_comparisons,operations_divisions,operations_exponentials,memory_activations,memory_parameters,memory_other_memory
+9105759143.0,4552879572.0,13635408,15520896,11611784,1000,162211808,83227808.0,0

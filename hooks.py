@@ -1,5 +1,6 @@
 from onnx import numpy_helper
 import numpy as np
+from pprint import pprint
 
 def batch_norm(inputs, outputs, attributes):
     # Based on https://arxiv.org/abs/1502.03167.
@@ -197,7 +198,7 @@ def avg_pool(inputs, outputs, attributes):
 
     if auto_pad == "VALID":
         for i in range(len(input_dims[2:])):
-            output_dims.append(np.ceil((input_dims[2:][i] - ((kernel_shape[i] - 1) * dilations[i] + 1)) / strides[i] + 1))
+            output_dims.append(np.ceil((input_dims[2:][i] - kernel_shape[i] + 1) / strides[i]))
     elif auto_pad == "SAME_UPPER" or auto_pad == "SAME_LOWER":
         for i in range(len(input_dims[2:])):
             output_dims.append(np.ceil(input_dims[2:][i] / strides[i]))
@@ -207,7 +208,7 @@ def avg_pool(inputs, outputs, attributes):
         end_p = attributes["pads"][len(kernel_shape):]
         pads = np.add(begin_p, end_p).tolist()
         for i in range(len(input_dims[2:])):
-            output_dims.append(ceil_mode((input_dims[2:][i] + pads[i] - ((kernel_shape[i] - 1) * dilations[i] + 1)) / strides[i] + 1))
+            output_dims.append(ceil_mode((input_dims[2:][i] + pads[i] - kernel_shape[i]) / strides[i] + 1))
 
     output_dims = np.array(output_dims).astype(int).tolist()
     output_dims = [input_dims[0], input_dims[1]] + output_dims
@@ -268,7 +269,7 @@ def max_pool(inputs, outputs, attributes):
 
     if auto_pad == "VALID":
         for i in range(len(input_dims[2:])):
-            output_dims.append(np.ceil((input_dims[2:][i] - ((kernel_shape[i] - 1) * dilations[i] + 1)) / strides[i] + 1))
+            output_dims.append(np.ceil((input_dims[2:][i] - ((kernel_shape[i] - 1) * dilations[i] + 1) + 1) / strides[i]))
     elif auto_pad == "SAME_UPPER" or auto_pad == "SAME_LOWER":
         for i in range(len(input_dims[2:])):
             output_dims.append(np.ceil(input_dims[2:][i] / strides[i]))
@@ -513,12 +514,16 @@ def concat(inputs, outputs, attributes):
     # check on which axis to concatenate
     axis = attributes["axis"] if "axis" in attributes else 1
 
+
     # check if dimensions after the axis are the same
     for i in range(len(inputs_shapes)):
         for j in range(len(inputs_shapes[i][axis + 1:])):
             if i == 0:
                 continue
             elif inputs_shapes[i][axis + 1:][j] != inputs_shapes[i - 1][axis + 1:][j]:
+                pprint(inputs)
+                print(axis)
+                print(inputs_shapes)
                 raise Exception("Not matching dimensions after the Concat axis!")
         
         for j in range(len(inputs_shapes[i][:axis])):

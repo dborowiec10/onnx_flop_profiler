@@ -1,0 +1,15 @@
+Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name
+keras2onnx,1.6.5,onnx,models/imagenet_xception.onnx,xception
+,,,,
+op_type,operations_flops,operations_multiply_adds,operations_additions,operations_comparisons,operations_divisions,operations_exponentials,memory_activations,memory_parameters,memory_other_memory
+Transpose,0,0,0,0,0,0,0,0,0
+Conv,9101662144.0,4550831072.0,0,0,0,0,78641280,83009696.0,0
+BatchNormalization,0,0,11610784,0,11610784,0,46443136,218112,0
+Relu,0,0,0,8493984,0,0,33975936,0,0
+MaxPool,0,0,0,7026912,0,0,3123072,0,0
+Add,0,0,1923272,0,0,0,0,0,0
+GlobalAveragePool,0,0,100352,0,0,0,8192,0,0
+Reshape,0,0,0,0,0,0,8192,0,0
+MatMul,4096999,2048500.0,0,0,0,0,4000,0,0
+Softmax,0,0,1000,0,1000,1000,4000,0,0
+Identity,0,0,0,0,0,0,4000,0,0

@@ -1,0 +1,18 @@
+Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name
+keras2onnx,1.6.5,onnx,models/imagenet_densenet201.onnx,densenet201
+,,,,
+op_type,operations_flops,operations_multiply_adds,operations_additions,operations_comparisons,operations_divisions,operations_exponentials,memory_activations,memory_parameters,memory_other_memory
+Transpose,0,0,0,0,0,0,0,0,0
+Pad,0,0,0,0,0,0,0,0,148400
+Conv,9541279744.0,4770639872.0,0,0,0,0,33700096,71455488.0,0
+BatchNormalization,0,0,27635104,0,27635104,0,110540416,916224,0
+Relu,0,0,0,27635104,0,0,110540416,0,0
+MaxPool,0,0,0,1871424,0,0,831744,0,0
+Identity,0,0,0,0,0,0,1726112,0,0
+Concat,0,0,0,0,0,0,83880832,0,0
+AveragePool,0,0,890368,0,0,0,890368,0,0
+GlobalAveragePool,0,0,122880,0,0,0,7680,0,0
+Reshape,0,0,0,0,0,0,7680,0,0
+MatMul,3840999,1920500.0,0,0,0,0,4000,0,0
+Add,0,0,1000,0,0,0,0,0,0
+Softmax,0,0,1000,0,1000,1000,4000,0,0

@@ -1,0 +1,13 @@
+Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name
+keras2onnx,1.6.5,onnx,models/imagenet_vgg16.onnx,vgg16
+,,,,
+op_type,operations_flops,operations_multiply_adds,operations_additions,operations_comparisons,operations_divisions,operations_exponentials,memory_activations,memory_parameters,memory_other_memory
+Transpose,0,0,0,0,0,0,0,0,0
+Conv,30693261312.0,15346630656.0,0,0,0,0,54190080,58858752.0,0
+Relu,0,0,0,13555712,0,0,54222848,0,0
+MaxPool,0,0,0,6121472,0,0,6121472,0,0
+Flatten,0,0,0,0,0,0,100352,0,0
+MatMul,247276517,123638260.0,0,0,0,0,36768,0,0
+Add,0,0,9192,0,0,0,0,0,0
+Softmax,0,0,1000,0,1000,1000,4000,0,0
+Identity,0,0,0,0,0,0,4000,0,0

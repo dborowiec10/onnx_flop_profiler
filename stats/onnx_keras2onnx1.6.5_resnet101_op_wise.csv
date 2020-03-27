@@ -1,0 +1,16 @@
+Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name
+keras2onnx,1.6.5,onnx,models/imagenet_resnet101.onnx,resnet101
+,,,,
+op_type,operations_flops,operations_multiply_adds,operations_additions,operations_comparisons,operations_divisions,operations_exponentials,memory_activations,memory_parameters,memory_other_memory
+Transpose,0,0,0,0,0,0,0,0,0
+Pad,0,0,0,0,0,0,0,0,148400
+Conv,15136292864.0,7568146432.0,0,0,0,0,62820352,169789952.0,0
+BatchNormalization,0,0,15705088,0,15705088,0,62820352,421376,0
+Relu,0,0,0,14199808,0,0,56799232,0,0
+MaxPool,0,0,0,1806336,0,0,802816,0,0
+Identity,0,0,0,0,0,0,806816,0,0
+Add,0,0,8932328,0,0,0,0,0,0
+GlobalAveragePool,0,0,100352,0,0,0,8192,0,0
+Reshape,0,0,0,0,0,0,8192,0,0
+MatMul,4096999,2048500.0,0,0,0,0,4000,0,0
+Softmax,0,0,1000,0,1000,1000,4000,0,0

@@ -1,0 +1,18 @@
+Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name
+keras2onnx,1.6.5,onnx,models/imagenet_inception_resnetv2.onnx,inception_resnetv2
+,,,,
+op_type,operations_flops,operations_multiply_adds,operations_additions,operations_comparisons,operations_divisions,operations_exponentials,memory_activations,memory_parameters,memory_other_memory
+Transpose,0,0,0,0,0,0,0,0,0
+Conv,12934850240.0,6467425120.0,0,0,0,0,50271808,216983680.0,0
+BatchNormalization,0,0,6914512,0,6914512,0,27658048,242176,0
+Relu,0,0,0,12515952,0,0,50063808,0,0
+MaxPool,0,0,0,3419136,0,0,1519616,0,0
+Identity,0,0,0,0,0,0,484000,0,0
+AveragePool,0,0,1080000,0,0,0,480000,0,0
+Concat,0,0,0,0,0,0,9706368,0,0
+Mul,11306880,5653440,0,0,0,0,0,0,0
+Add,0,0,5654440,0,0,0,0,0,0
+GlobalAveragePool,0,0,38400,0,0,0,6144,0,0
+Reshape,0,0,0,0,0,0,6144,0,0
+MatMul,3072999,1536500.0,0,0,0,0,4000,0,0
+Softmax,0,0,1000,0,1000,1000,4000,0,0

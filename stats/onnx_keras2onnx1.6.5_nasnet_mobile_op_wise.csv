@@ -1,0 +1,19 @@
+Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name
+keras2onnx,1.6.5,onnx,models/imagenet_nasnet_mobile.onnx,nasnet_mobile
+,,,,
+op_type,operations_flops,operations_multiply_adds,operations_additions,operations_comparisons,operations_divisions,operations_exponentials,memory_activations,memory_parameters,memory_other_memory
+Transpose,0,0,0,0,0,0,0,0,0
+Conv,1125165632.0,562582816.0,0,0,0,0,31748140,16784960.0,0
+BatchNormalization,0,0,4548587,0,4548587,0,18194348,146952,0
+Relu,0,0,0,9092331,0,0,36369324,0,0
+Pad,0,0,0,0,0,0,0,0,1611976
+Slice,0,0,0,0,0,0,3370880,0,0
+AveragePool,0,0,8341760,0,0,0,5218304,0,0
+Concat,0,0,0,0,0,0,7554624,0,0
+Add,0,0,1596440,0,0,0,0,0,0
+MaxPool,0,0,0,1397088,0,0,620928,0,0
+GlobalAveragePool,0,0,51744,0,0,0,4224,0,0
+Reshape,0,0,0,0,0,0,4224,0,0
+MatMul,2112999,1056500.0,0,0,0,0,4000,0,0
+Softmax,0,0,1000,0,1000,1000,4000,0,0
+Identity,0,0,0,0,0,0,4000,0,0

@@ -1,0 +1,5 @@
+Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name
+keras2onnx,1.6.5,onnx,models/imagenet_mobilenet_alpha_0.75.onnx,mobilenet_alpha_0.75
+,,,,
+operations_flops,operations_multiply_adds,operations_additions,operations_comparisons,operations_divisions,operations_exponentials,memory_activations,memory_parameters,memory_other_memory
+650800896.0,325400448.0,3820648,3782016,3783016,1000,30281344,10342240.0,180300

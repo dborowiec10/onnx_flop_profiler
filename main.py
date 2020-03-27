@@ -30,8 +30,9 @@ total_statistics = {}
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string('input', 'default', 'The filename of the model in *.onnx format')
+flags.DEFINE_string('out_dir', '.', 'Directory to dump statistics files')
 flags.DEFINE_integer('batch_size', 1, 'assumed input data mini-batch size')
-flags.DEFINE_boolean('modify_batch_size', True, 'Whether to modify the mini-batch size on model input. Modifies to <batch_size>')
+
 
 def flatten_dict(init, lkey=''):
     ret = {}
@@ -62,7 +63,7 @@ def save_stats():
         "memory_parameters",
         "memory_other_memory"
     ]
-    with open(stat_preamble + "_node_wise.csv", 'w') as node_wise_file:
+    with open(FLAGS.out_dir + "/" + stat_preamble + "_node_wise.csv", 'w') as node_wise_file:
         node_wise_file.write("Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name\n")
         node_wise_file.write(mod_producer_name + "," + mod_producer_ver + "," + mod_domain + "," + mod_filename + "," + mod_name + "\n")
         node_wise_file.write(",,,,\n")
@@ -71,7 +72,7 @@ def save_stats():
         for i in layer_statistics:
             writer.writerow(flatten_dict(i))
 
-    with open(stat_preamble + "_op_wise.csv", 'w') as op_wise_file:
+    with open(FLAGS.out_dir + "/" + stat_preamble + "_op_wise.csv", 'w') as op_wise_file:
         op_wise_file.write("Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name\n")
         op_wise_file.write(mod_producer_name + "," + mod_producer_ver + "," + mod_domain + "," + mod_filename + "," + mod_name + "\n")
         op_wise_file.write(",,,,\n")
@@ -81,7 +82,7 @@ def save_stats():
             v["op_type"] = k
             writer.writerow(v)
 
-    with open(stat_preamble + "_total.csv", 'w') as total_file:
+    with open(FLAGS.out_dir + "/" + stat_preamble + "_total.csv", 'w') as total_file:
         total_file.write("Model Producer Name, Model Producer Ver., Model Domain, Model Filename, Model Name\n")
         total_file.write(mod_producer_name + "," + mod_producer_ver + "," + mod_domain + "," + mod_filename + "," + mod_name + "\n")
         total_file.write(",,,,\n")
@@ -241,8 +242,7 @@ def init(filename):
             if _type == "model_input":
                 id = get_identifier(nin)
                 shape = convert_tensor_shape_to_array(id)
-                if FLAGS.modify_batch_size:
-                    shape[0] = FLAGS.batch_size
+                shape[0] = FLAGS.batch_size
                 identifier = id.name
             add_node_io(nin, _type, consumer=node.name, data={
                 "shape": shape,
@@ -256,8 +256,7 @@ def init(filename):
             if _type == "model_output":
                 id = get_identifier(nout)
                 shape = convert_tensor_shape_to_array(id)
-                if FLAGS.modify_batch_size:
-                    shape[0] = FLAGS.batch_size
+                shape[0] = FLAGS.batch_size
                 identifier = id.name
             add_node_io(nout, _type, producer=node.name, data={
                 "shape": shape,
