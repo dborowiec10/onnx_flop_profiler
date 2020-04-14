@@ -1,2 +1,2 @@
-# onnx-flop-profiler
+# onnxflopprof
 TODO:
