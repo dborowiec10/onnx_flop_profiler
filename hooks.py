@@ -29,12 +29,13 @@ def batch_norm(inputs, outputs, attributes):
     # calculate footprint
     comp_additions = np.prod(input_dims)
     comp_divisions = np.prod(input_dims)
-    mem_parameters = input_dims[1] * 2
+    # running mean, var, weight, bias
+    mem_parameters = input_dims[1] * 4
     mem_activations = np.prod(input_dims)
-
+    flops = comp_additions + comp_divisions
     return {
         "operations": {
-            "flops": 0,
+            "flops": flops,
             "multiply_adds": 0,
             "comparisons": 0,
             "additions": comp_additions,
@@ -70,7 +71,6 @@ def conv(inputs, outputs, attributes):
         raise Exception("Undefined weigths input for Conv layer")
     if len(inputs) > 2:
         bias_dims = inputs[2]["data"]["identifier"].dims
-
     # should be available, otherwise take weights and return anything after the first 2 dimensions
     kernel_shape = attributes["kernel_shape"] if "kernel_shape" in attributes else weights_dims[2:]
 
@@ -113,7 +113,7 @@ def conv(inputs, outputs, attributes):
     # calculate footprint
     comp_multiply_adds = np.prod(kernel_shape) * np.prod(output_dims[2:]) * input_dims[1] * output_dims[1] * output_dims[0] / group
     comp_flops = comp_multiply_adds * 2
-    mem_parameters = np.prod(kernel_shape) * input_dims[1] * output_dims[1] / group + (1 if len(bias_dims) > 0 else 0) * output_dims[1]
+    mem_parameters = (np.prod(kernel_shape) * input_dims[1] * output_dims[1] / group) + (1 if len(bias_dims) > 0 else 0) * output_dims[1]
     mem_activations = np.prod(output_dims[2:]) * output_dims[1] * output_dims[0]
     return {
         "operations": {
@@ -874,7 +874,7 @@ def clip(inputs, outputs, attributes):
 
     return {
         "operations": {
-            "flops": 0,
+            "flops": comp_comparisons,
             "multiply_adds": 0,
             "comparisons": comp_comparisons,
             "additions": 0,
@@ -1042,6 +1042,9 @@ def gemm(inputs, outputs, attributes):
     # B has shape (K, N)
     # C is broadcast into (M, N)
     out = alpha * np.dot(a, b) + beta * c
+    # weight of gemm [normally is FC]
+    parameters += np.prod(b.shape)
+
     outputs[0]["data"]["shape"] = out.shape
     # https://bluewaters.ncsa.illinois.edu/liferay-content/image-gallery/content/BLA-final
     # flops = 2 * m * k * n [including adds.]
