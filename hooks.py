@@ -7,7 +7,7 @@ from pprint import pprint
 all outputs will get updated with new shape.
 """
 
-def batch_norm(node, inputs, outputs, attributes):
+def batch_norm(inputs, outputs, attributes):
     # Based on https://arxiv.org/abs/1502.03167.
 
     # prepare footprint counters
@@ -48,7 +48,7 @@ def batch_norm(node, inputs, outputs, attributes):
         }
     }
 
-def conv(node, inputs, outputs, attributes):
+def conv(inputs, outputs, attributes):
     # convolution output size based on the following publication: https://arxiv.org/pdf/1603.07285.pdf
 
     # prepare footprint counters
@@ -131,7 +131,7 @@ def conv(node, inputs, outputs, attributes):
         }
     }
 
-def global_avg_pool(node, inputs, outputs, attributes):
+def global_avg_pool(inputs, outputs, attributes):
     # prepare footprint counters
     comp_additions = 0
     mem_activations = 0
@@ -167,7 +167,7 @@ def global_avg_pool(node, inputs, outputs, attributes):
         }
     }
 
-def avg_pool(node, inputs, outputs, attributes):
+def avg_pool(inputs, outputs, attributes):
     # prepare footprint counters
     comp_additions = 0
     mem_activations = 0
@@ -238,7 +238,7 @@ def avg_pool(node, inputs, outputs, attributes):
         }
     }
 
-def max_pool(node, inputs, outputs, attributes):
+def max_pool(inputs, outputs, attributes):
     # prepare footprint counters
     comp_comparisons = 0
     mem_activations = 0
@@ -309,7 +309,7 @@ def max_pool(node, inputs, outputs, attributes):
         }
     }
 
-def identity(node, inputs, outputs, attributes):
+def identity(inputs, outputs, attributes):
     # prepare footprint counters
     mem_activations = 0
     
@@ -339,7 +339,7 @@ def identity(node, inputs, outputs, attributes):
         }
     }
 
-def pad(node, inputs, outputs, attributes):
+def pad(inputs, outputs, attributes):
     # Pad follows similar structure to np.pad - https://docs.scipy.org/doc/numpy/reference/generated/numpy.pad.html
     # we are interested only in the _before, _after pads for changing input shape
     # mode will not be used as the data is irrelevant
@@ -385,7 +385,7 @@ def pad(node, inputs, outputs, attributes):
         }
     }
 
-def reshape(node, inputs, outputs, attributes):
+def reshape(inputs, outputs, attributes):
     mem_activations = 0
     # collect input dimensions
     input_dims = inputs[0]["data"]["shape"]
@@ -427,7 +427,7 @@ def reshape(node, inputs, outputs, attributes):
     }
 
 
-def transpose(node, inputs, outputs, attributes):
+def transpose(inputs, outputs, attributes):
     # https://www.researchgate.net/publication/273912700_In-Place_Matrix_Transposition_on_GPUs
     # Transpose has no computation measured as it only changes the order of channels (usually in place)
     # Transpose will have a singular tensor as its input
@@ -472,7 +472,7 @@ def transpose(node, inputs, outputs, attributes):
         }
     }
 
-def relu(node, inputs, outputs, attributes):
+def relu(inputs, outputs, attributes):
     # prepare footprint counters
     comp_comparisons = 0
     mem_activations = 0
@@ -507,7 +507,7 @@ def relu(node, inputs, outputs, attributes):
         }
     }
 
-def concat(node, inputs, outputs, attributes):
+def concat(inputs, outputs, attributes):
     mem_activations = 0
     inputs_shapes = []
     # # collect input dimensions
@@ -571,7 +571,7 @@ def concat(node, inputs, outputs, attributes):
         }
     }
 
-def add(node, inputs, outputs, attributes):
+def add(inputs, outputs, attributes):
     comp_additions = 0
     # collect input information
     a = inputs[0]["data"]["shape"]
@@ -615,7 +615,7 @@ def add(node, inputs, outputs, attributes):
         }
     }
 
-def mul(node, inputs, outputs, attributes):
+def mul(inputs, outputs, attributes):
     comp_multiply_adds = 0
     comp_flops = 0
     # collect input information
@@ -657,7 +657,7 @@ def mul(node, inputs, outputs, attributes):
         }
     }
 
-def mat_mul(node, inputs, outputs, attributes):
+def mat_mul(inputs, outputs, attributes):
     comp_flops = 0
     comp_multiply_adds = 0
     mem_activations = 0
@@ -714,7 +714,7 @@ def mat_mul(node, inputs, outputs, attributes):
     }
 
 
-def softmax(node, inputs, outputs, attributes):
+def softmax(inputs, outputs, attributes):
     comp_exponentials = 0
     comp_additions = 0
     comp_divisions = 0
@@ -755,7 +755,7 @@ def softmax(node, inputs, outputs, attributes):
         }
     }
 
-def _slice(node, inputs, outputs, attributes):
+def _slice(inputs, outputs, attributes):
     mem_activations = 0
 
     # collect input information
@@ -818,7 +818,7 @@ def _slice(node, inputs, outputs, attributes):
     }
 
 
-def flatten(node, inputs, outputs, attributes):
+def flatten(inputs, outputs, attributes):
     mem_activations = 0
 
     # collect input information
@@ -856,7 +856,7 @@ def flatten(node, inputs, outputs, attributes):
     }
 
 
-def clip(node, inputs, outputs, attributes):
+def clip(inputs, outputs, attributes):
     comp_comparisons = 0
 
     # collect input information
@@ -885,7 +885,7 @@ def clip(node, inputs, outputs, attributes):
         }
     }
 
-def shape(node, inputs, outputs, attributes):
+def shape(inputs, outputs, attributes):
     # really does nothing, output shape information.
     
     # collect input information
@@ -912,7 +912,7 @@ def shape(node, inputs, outputs, attributes):
         }
     }
 
-def constant(node, inputs, outputs, attributes):
+def constant(inputs, outputs, attributes):
     # Do check your code, why it is using constant.
     # TODO: Not sure whether we should validate the data_type.
     assert len(inputs) == 0, f"Constant should not have taken inputs, got {inputs}"
@@ -939,7 +939,7 @@ def constant(node, inputs, outputs, attributes):
         }
     }
 
-def gather(node, inputs, outputs, attributes):
+def gather(inputs, outputs, attributes):
     # most usage of gather is to 
     # pick axises of elements out.
     # i.e. from inputs[0] pick inputs[1]
@@ -973,7 +973,7 @@ def gather(node, inputs, outputs, attributes):
         }
     }
 
-def unsqueeze(node, inputs, outputs, attributes):
+def unsqueeze(inputs, outputs, attributes):
     axis_to_expand = attributes.get("axes", None)
     assert axis_to_expand is not None, f"Axes should be in attributes, got {attributes}"
     a = inputs[0]["data"]["raw_data"]
@@ -997,7 +997,7 @@ def unsqueeze(node, inputs, outputs, attributes):
         }
     }
 
-def gemm(node, inputs, outputs, attributes):
+def gemm(inputs, outputs, attributes):
     comp_flops = 0
     comp_multiply_adds = 0
     mem_activations = 0

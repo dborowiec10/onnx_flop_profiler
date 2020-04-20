@@ -206,7 +206,7 @@ class ModelStats(object):
       
       # the _outputs, will get updated!
       # meaning the stored node io in self.model_node_io will get updated.
-      footprint = hook[n.op_type](n, _inputs, _outputs, _attributes)
+      footprint = hook[n.op_type](_inputs, _outputs, _attributes)
       self.add_footprint(n.op_type, footprint)
   
   def _prep_stats(self):
