@@ -23,6 +23,12 @@ FIELDS = [
 
 
 class ModelStats(object):
+  """
+  Example usage:
+    m = ModelStats(name, onnxmodel)
+    m.count()
+    m.export_stats(path)
+  """
   def __init__(self, model_name, onnx_model):
     super().__init__()
     assert onnx_model is not None, "ONNX model is none"
