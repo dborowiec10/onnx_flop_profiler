@@ -28,6 +28,8 @@ class ModelStats(object):
     m = ModelStats(name, onnxmodel)
     m.count()
     m.export_stats(path)
+
+    operations_flops = 2*multiply_adds and additions and comparisons and divisions and exponentials
   """
   def __init__(self, model_name, onnx_model):
     super().__init__()

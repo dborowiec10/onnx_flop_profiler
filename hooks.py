@@ -142,22 +142,24 @@ def global_avg_pool(inputs, outputs, attributes):
         input_dims = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
         if input_dims == None:
             raise Exception("1st input for GlobalAvgPool operation not specified!")
-
-    output_dims = [input_dims[0], input_dims[1]]
-    for i in range(len(input_dims[2:])):
-        output_dims.append(1)
+    
+    old_dims = input_dims[2:]
+    output_dims = input_dims[:2]+[1,1]
 
     outputs[0]["data"]["shape"] = output_dims
-    comp_additions = np.prod(input_dims)
+    # add all w, h dimensions then divide by the w, h.
+    comp_additions = np.prod(input_dims[1:])
     mem_activations = np.prod(output_dims)
-
+    # this operation is done over b, c, w, h
+    # output dim is in [b,c, 1, 1]
+    flops = (comp_additions+1) * output_dims[0]
     return {
         "operations": {
-            "flops": 0,
+            "flops": flops,
             "multiply_adds": 0,
             "comparisons": 0,
             "additions": comp_additions,
-            "divisions": 0,
+            "divisions": 1,
             "exponentials": 0
         },
         "memory": {
@@ -182,7 +184,7 @@ def avg_pool(inputs, outputs, attributes):
     # should be available, otherwise take weights and return anything after the first 2 dimensions
     kernel_shape = attributes["kernel_shape"] if "kernel_shape" in attributes else None
     if kernel_shape == None:
-        raise Exception("Undefined kernel shape for MaxPool layer")
+        raise Exception("Undefined kernel shape for avgpool layer")
 
     # collect dilations
     dilations = attributes["dilations"] if "dilations" in attributes else [1 for k in kernel_shape]
@@ -295,7 +297,7 @@ def max_pool(inputs, outputs, attributes):
 
     return {
         "operations": {
-            "flops": 0,
+            "flops": comp_comparisons,
             "multiply_adds": 0,
             "comparisons": comp_comparisons,
             "additions": 0,
@@ -490,10 +492,11 @@ def relu(inputs, outputs, attributes):
     # calculate footprint
     comp_comparisons = np.prod(input_dims)
     mem_activations = comp_comparisons
-
+    # Relu = max(0, inputs)
+    # should have flops of inputs-dim because of the comparisons.
     return {
         "operations": {
-            "flops": 0,
+            "flops": comp_comparisons,
             "multiply_adds": 0,
             "comparisons": comp_comparisons,
             "additions": 0,
@@ -584,7 +587,7 @@ def add(inputs, outputs, attributes):
     if b == None or len(b) < 1:
         b = inputs[1]["data"]["identifier"].dims if inputs[1]["data"]["identifier"] != None else None
         if b == None:
-            raise Exception("2st input for Add operation not specified!")
+            raise Exception("2nd input for Add operation not specified!")
     
     max_dims = max([a, b], key=len)
     min_dims = min([a, b], key=len)
@@ -601,7 +604,7 @@ def add(inputs, outputs, attributes):
 
     return {
         "operations": {
-            "flops": 0,
+            "flops": comp_additions,
             "multiply_adds": 0,
             "comparisons": 0,
             "additions": comp_additions,
@@ -1063,6 +1066,41 @@ def gemm(inputs, outputs, attributes):
         }
     }
 
+def reduce_mean(inputs, outputs, attributes):
+    a = inputs[0]["data"]["shape"]
+    if a == None or len(a) < 1:
+        a = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
+        if a == None:
+            raise Exception("input for reduce mean operation not specified!")
+    a = np.zeros(a)
+    axis = attributes.get('axes', None)
+    keepdim = attributes.get('keepdims', 0)
+    assert axis is not None, f"require axes to be specified to reduce mean, got {attributes}"
+    reduced = np.mean(a, axis=tuple(axis), keepdims=keepdim)
+
+    outputs[0]["data"]["shape"] = reduced.shape
+    # add all w, h dimensions then divide by the w, h.
+    comp_additions = np.prod(a.shape[1:])
+    mem_activations = np.prod(reduced.shape)
+    # this operation is done over b, c, w, h
+    # output dim is in [b,c, 1, 1]
+    flops = (comp_additions+1) * reduced.shape[0]
+    return {
+        "operations": {
+            "flops": flops,
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": comp_additions,
+            "divisions": 1,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": 0,
+            "activations": mem_activations,
+            "other_memory": 0
+        }
+    }
+
 
 hook = {
     "BatchNormalization": batch_norm,
@@ -1088,6 +1126,7 @@ hook = {
     "Gather": gather,
     "Unsqueeze": unsqueeze,
     "Gemm": gemm,
+    "ReduceMean": reduce_mean,
     #"GRU": gru,
     #"LSTM": lstm,
 }
