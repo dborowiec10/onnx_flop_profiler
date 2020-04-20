@@ -1,6 +1,11 @@
 from onnx import numpy_helper
+import onnx
 import numpy as np
 from pprint import pprint
+
+"""
+all outputs will get updated with new shape.
+"""
 
 def batch_norm(inputs, outputs, attributes):
     # Based on https://arxiv.org/abs/1502.03167.
@@ -16,7 +21,7 @@ def batch_norm(inputs, outputs, attributes):
     if input_dims == None or len(input_dims) < 1:
         input_dims = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
         if input_dims == None:
-            raise Exception("1st input for GlobalAvgPool operation not specified!")
+            raise Exception("1st input for batchnorm operation not specified!")
     
     # data dimension doesn't change
     outputs[0]["data"]["shape"] = input_dims
@@ -24,12 +29,13 @@ def batch_norm(inputs, outputs, attributes):
     # calculate footprint
     comp_additions = np.prod(input_dims)
     comp_divisions = np.prod(input_dims)
-    mem_parameters = input_dims[1] * 2
+    # running mean, var, weight, bias
+    mem_parameters = input_dims[1] * 4
     mem_activations = np.prod(input_dims)
-
+    flops = comp_additions + comp_divisions
     return {
         "operations": {
-            "flops": 0,
+            "flops": flops,
             "multiply_adds": 0,
             "comparisons": 0,
             "additions": comp_additions,
@@ -58,14 +64,13 @@ def conv(inputs, outputs, attributes):
     if input_dims == None or len(input_dims) < 1:
         input_dims = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
         if input_dims == None:
-            raise Exception("1st input for GlobalAvgPool operation not specified!")
+            raise Exception("1st input for conv operation not specified!")
     
     weights_dims = inputs[1]["data"]["identifier"].dims if inputs[1]["data"]["identifier"] != None else None
     if weights_dims == None:
         raise Exception("Undefined weigths input for Conv layer")
     if len(inputs) > 2:
         bias_dims = inputs[2]["data"]["identifier"].dims
-
     # should be available, otherwise take weights and return anything after the first 2 dimensions
     kernel_shape = attributes["kernel_shape"] if "kernel_shape" in attributes else weights_dims[2:]
 
@@ -108,7 +113,7 @@ def conv(inputs, outputs, attributes):
     # calculate footprint
     comp_multiply_adds = np.prod(kernel_shape) * np.prod(output_dims[2:]) * input_dims[1] * output_dims[1] * output_dims[0] / group
     comp_flops = comp_multiply_adds * 2
-    mem_parameters = np.prod(kernel_shape) * input_dims[1] * output_dims[1] / group + (1 if len(bias_dims) > 0 else 0) * output_dims[1]
+    mem_parameters = (np.prod(kernel_shape) * input_dims[1] * output_dims[1] / group) + (1 if len(bias_dims) > 0 else 0) * output_dims[1]
     mem_activations = np.prod(output_dims[2:]) * output_dims[1] * output_dims[0]
     return {
         "operations": {
@@ -137,22 +142,24 @@ def global_avg_pool(inputs, outputs, attributes):
         input_dims = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
         if input_dims == None:
             raise Exception("1st input for GlobalAvgPool operation not specified!")
-
-    output_dims = [input_dims[0], input_dims[1]]
-    for i in range(len(input_dims[2:])):
-        output_dims.append(1)
+    
+    old_dims = input_dims[2:]
+    output_dims = input_dims[:2]+[1,1]
 
     outputs[0]["data"]["shape"] = output_dims
-    comp_additions = np.prod(input_dims)
+    # add all w, h dimensions then divide by the w, h.
+    comp_additions = np.prod(input_dims[1:])
     mem_activations = np.prod(output_dims)
-
+    # this operation is done over b, c, w, h
+    # output dim is in [b,c, 1, 1]
+    flops = (comp_additions+1) * output_dims[0]
     return {
         "operations": {
-            "flops": 0,
+            "flops": flops,
             "multiply_adds": 0,
             "comparisons": 0,
             "additions": comp_additions,
-            "divisions": 0,
+            "divisions": 1,
             "exponentials": 0
         },
         "memory": {
@@ -177,7 +184,7 @@ def avg_pool(inputs, outputs, attributes):
     # should be available, otherwise take weights and return anything after the first 2 dimensions
     kernel_shape = attributes["kernel_shape"] if "kernel_shape" in attributes else None
     if kernel_shape == None:
-        raise Exception("Undefined kernel shape for MaxPool layer")
+        raise Exception("Undefined kernel shape for avgpool layer")
 
     # collect dilations
     dilations = attributes["dilations"] if "dilations" in attributes else [1 for k in kernel_shape]
@@ -290,7 +297,7 @@ def max_pool(inputs, outputs, attributes):
 
     return {
         "operations": {
-            "flops": 0,
+            "flops": comp_comparisons,
             "multiply_adds": 0,
             "comparisons": comp_comparisons,
             "additions": 0,
@@ -382,8 +389,7 @@ def pad(inputs, outputs, attributes):
 
 def reshape(inputs, outputs, attributes):
     mem_activations = 0
-
-    # # collect input dimensions
+    # collect input dimensions
     input_dims = inputs[0]["data"]["shape"]
     if input_dims == None or len(input_dims) < 1:
         input_dims = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
@@ -391,12 +397,18 @@ def reshape(inputs, outputs, attributes):
             raise Exception("1st input for Relu operation not specified!")
 
     alloc_input = np.zeros(input_dims)
-    reshape = numpy_helper.to_array(inputs[1]["data"]["identifier"]).tolist()
-    for i in range(len(reshape)):
-        if reshape[i] == 0:
-            reshape[i] = input_dims[i]
+    if inputs[1]["data"].get("identifier") is not None:
+        # NOTE: only model input/output tensor will follow this path.
+        reshape = numpy_helper.to_array(inputs[1]["data"]["identifier"]).tolist()
+        for i in range(len(reshape)):
+            if reshape[i] == 0:
+                reshape[i] = input_dims[i]
+    else:
+        # NOTE: io node will follow this path.
+        if inputs[1]["data"].get("raw_data", None) is not None:
+            # TODO: assuming raw_data is the actual shape you trying to reshape
+            reshaped = list(np.reshape(alloc_input, inputs[1]["data"]["raw_data"]).shape)
 
-    reshaped = list(np.reshape(alloc_input, reshape).shape)
     outputs[0]["data"]["shape"] = reshaped
     mem_activations = np.prod(reshaped)
 
@@ -480,10 +492,11 @@ def relu(inputs, outputs, attributes):
     # calculate footprint
     comp_comparisons = np.prod(input_dims)
     mem_activations = comp_comparisons
-
+    # Relu = max(0, inputs)
+    # should have flops of inputs-dim because of the comparisons.
     return {
         "operations": {
-            "flops": 0,
+            "flops": comp_comparisons,
             "multiply_adds": 0,
             "comparisons": comp_comparisons,
             "additions": 0,
@@ -500,7 +513,6 @@ def relu(inputs, outputs, attributes):
 def concat(inputs, outputs, attributes):
     mem_activations = 0
     inputs_shapes = []
-
     # # collect input dimensions
     for i in range(len(inputs)):
         id = inputs[i]["data"]["shape"]
@@ -514,7 +526,6 @@ def concat(inputs, outputs, attributes):
     # check on which axis to concatenate
     axis = attributes["axis"] if "axis" in attributes else 1
 
-
     # check if dimensions after the axis are the same
     for i in range(len(inputs_shapes)):
         for j in range(len(inputs_shapes[i][axis + 1:])):
@@ -522,8 +533,6 @@ def concat(inputs, outputs, attributes):
                 continue
             elif inputs_shapes[i][axis + 1:][j] != inputs_shapes[i - 1][axis + 1:][j]:
                 pprint(inputs)
-                print(axis)
-                print(inputs_shapes)
                 raise Exception("Not matching dimensions after the Concat axis!")
         
         for j in range(len(inputs_shapes[i][:axis])):
@@ -538,8 +547,17 @@ def concat(inputs, outputs, attributes):
     output_dims[axis] = sum
     
     outputs[0]["data"]["shape"] = output_dims
-    mem_activations = np.prod(output_dims)
 
+    # If both inputs have raw_data
+    # we do the actual concat on the data too.
+    inputs_raw = []
+    for i in inputs:
+        if i["data"].get("raw_data", None) is not None:
+            inputs_raw.append(i["data"]["raw_data"])
+    if len(inputs_raw) > 0 :
+        outputs[0]["data"]["raw_data"] = np.concatenate(inputs_raw, axis)
+
+    mem_activations = np.prod(output_dims)
     return {
         "operations": {
             "flops": 0,
@@ -569,10 +587,8 @@ def add(inputs, outputs, attributes):
     if b == None or len(b) < 1:
         b = inputs[1]["data"]["identifier"].dims if inputs[1]["data"]["identifier"] != None else None
         if b == None:
-            raise Exception("2st input for Add operation not specified!")
+            raise Exception("2nd input for Add operation not specified!")
     
-    
-
     max_dims = max([a, b], key=len)
     min_dims = min([a, b], key=len)
 
@@ -588,7 +604,7 @@ def add(inputs, outputs, attributes):
 
     return {
         "operations": {
-            "flops": 0,
+            "flops": comp_additions,
             "multiply_adds": 0,
             "comparisons": 0,
             "additions": comp_additions,
@@ -813,7 +829,7 @@ def flatten(inputs, outputs, attributes):
     if a == None or len(a) < 1:
         a = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
         if a == None:
-            raise Exception("1st input for Softmax operation not specified!")
+            raise Exception("1st input for flatten operation not specified!")
     
     axis = attributes["axis"] if "axis" in attributes else 1
 
@@ -858,7 +874,7 @@ def clip(inputs, outputs, attributes):
 
     return {
         "operations": {
-            "flops": 0,
+            "flops": comp_comparisons,
             "multiply_adds": 0,
             "comparisons": comp_comparisons,
             "additions": 0,
@@ -871,6 +887,223 @@ def clip(inputs, outputs, attributes):
             "other_memory": 0
         }
     }
+
+def shape(inputs, outputs, attributes):
+    # really does nothing, output shape information.
+    
+    # collect input information
+    a = inputs[0]["data"]["shape"]
+    if a == None or len(a) < 1:
+        a = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
+        if a == None:
+            raise Exception("1st input for Shape operation not specified!")
+    
+    outputs[0]["data"]["shape"] = a
+    return {
+        "operations": {
+            "flops": 0,
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": 0,
+            "activations": 0,
+            "other_memory": 0
+        }
+    }
+
+def constant(inputs, outputs, attributes):
+    # Do check your code, why it is using constant.
+    # TODO: Not sure whether we should validate the data_type.
+    assert len(inputs) == 0, f"Constant should not have taken inputs, got {inputs}"
+    outputs[0]["data"]["shape"] = [1]
+    dtype = attributes["value"].data_type
+    b = None
+    if dtype == onnx.TensorProto.DataType.INT64:
+        # NOTE: onnx is little endian serialized 
+        b = int.from_bytes(attributes['value'].raw_data, byteorder='little', signed=True)
+        outputs[0]["data"]["raw_data"] = b
+    return {
+        "operations": {
+            "flops": 0,
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": 0,
+            "activations": 0,
+            "other_memory": 0
+        }
+    }
+
+def gather(inputs, outputs, attributes):
+    # most usage of gather is to 
+    # pick axises of elements out.
+    # i.e. from inputs[0] pick inputs[1]
+    assert len(inputs) > 1, f"Must have more than 1 input, got {inputs}"
+    assert attributes.get("axis", None) is not None, f"Must have axis, got {attributes}"
+    # TODO: currently this assume its just picking out value from the shape.
+    # it is very possible that some usage of gather is to pick data out instead.
+    a = np.array(inputs[0]["data"]["shape"])
+    b = inputs[1]["data"]["raw_data"]
+    axis = attributes.get("axis", None)
+    c = np.take(a, b, axis=axis)
+    if isinstance(c, np.ndarray):
+        outputs[0]["data"]["shape"] = list(c.shape)
+    else:
+        outputs[0]["data"]["shape"] = [1]
+    outputs[0]["data"]["raw_data"] = c
+    other_memory = np.prod(outputs[0]["data"]["shape"])
+    return {
+        "operations": {
+            "flops": 0,
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": 0,
+            "activations": 0,
+            "other_memory": other_memory
+        }
+    }
+
+def unsqueeze(inputs, outputs, attributes):
+    axis_to_expand = attributes.get("axes", None)
+    assert axis_to_expand is not None, f"Axes should be in attributes, got {attributes}"
+    a = inputs[0]["data"]["raw_data"]
+    for i in axis_to_expand:
+        a = np.expand_dims(a, axis=i)
+    outputs[0]["data"]["shape"] = list(a.shape)
+    outputs[0]["data"]["raw_data"] = a
+    return {
+        "operations": {
+            "flops": 0,
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": 0,
+            "activations": 0,
+            "other_memory": np.prod(a.shape)
+        }
+    }
+
+def gemm(inputs, outputs, attributes):
+    comp_flops = 0
+    comp_multiply_adds = 0
+    mem_activations = 0
+    parameters = 0
+    # collect input information
+    a = inputs[0]["data"]["shape"]
+    if a == None or len(a) < 1:
+        a = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
+        if a == None:
+            raise Exception("1st input for Gemm operation not specified!")
+    a = np.zeros(a)
+    b = []
+    for s in inputs[1]["data"]["identifier"].dims:
+        b.append(s)
+    b = np.zeros(b)
+
+    # whether there is bias.
+    hadbias = True
+    if len(b) == 2:
+        c = np.array(0)
+        hadbias = False
+    else:
+        c = []
+        for s in inputs[2]["data"]["identifier"].dims:
+            c.append(s)
+        c = np.zeros(c)
+
+    assert len(attributes) >= 2, f"must have at least 2 attributes, alpha and beta, got {attributes}."
+    transA = attributes.get("transA", 0)
+    transB = attributes.get("transB", 0)
+    alpha = attributes.get("alpha", 1.0)
+    beta = attributes.get("beta", 1.0)
+
+    b = b if transB == 0 else b.T
+    a = a if transA == 0 else a.T
+    # General Matrix multiplication:
+    # https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Level_3
+    # A has shape (M, K)
+    # B has shape (K, N)
+    # C is broadcast into (M, N)
+    out = alpha * np.dot(a, b) + beta * c
+    # weight of gemm [normally is FC]
+    parameters += np.prod(b.shape)
+
+    outputs[0]["data"]["shape"] = out.shape
+    # https://bluewaters.ncsa.illinois.edu/liferay-content/image-gallery/content/BLA-final
+    # flops = 2 * m * k * n [including adds.]
+    comp_flops = 2 * np.prod(a.shape) * b.shape[1]
+    comp_multiply_adds = np.ceil(comp_flops / 2)
+    mem_activations = np.prod(out.shape)
+
+    parameters += 2*out.shape[1] if hadbias else out.shape[1]
+    return {
+        "operations": {
+            "flops": comp_flops,
+            "multiply_adds": comp_multiply_adds,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": parameters,
+            "activations": mem_activations,
+            "other_memory": 0
+        }
+    }
+
+def reduce_mean(inputs, outputs, attributes):
+    a = inputs[0]["data"]["shape"]
+    if a == None or len(a) < 1:
+        a = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
+        if a == None:
+            raise Exception("input for reduce mean operation not specified!")
+    a = np.zeros(a)
+    axis = attributes.get('axes', None)
+    keepdim = attributes.get('keepdims', 0)
+    assert axis is not None, f"require axes to be specified to reduce mean, got {attributes}"
+    reduced = np.mean(a, axis=tuple(axis), keepdims=keepdim)
+
+    outputs[0]["data"]["shape"] = reduced.shape
+    # add all w, h dimensions then divide by the w, h.
+    comp_additions = np.prod(a.shape[1:])
+    mem_activations = np.prod(reduced.shape)
+    # this operation is done over b, c, w, h
+    # output dim is in [b,c, 1, 1]
+    flops = (comp_additions+1) * reduced.shape[0]
+    return {
+        "operations": {
+            "flops": flops,
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": comp_additions,
+            "divisions": 1,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": 0,
+            "activations": mem_activations,
+            "other_memory": 0
+        }
+    }
+
 
 hook = {
     "BatchNormalization": batch_norm,
@@ -890,5 +1123,13 @@ hook = {
     "Mul": mul,
     "MatMul": mat_mul,
     "Slice": _slice,
-    "Flatten": flatten
+    "Flatten": flatten,
+    "Shape": shape,
+    "Constant": constant,
+    "Gather": gather,
+    "Unsqueeze": unsqueeze,
+    "Gemm": gemm,
+    "ReduceMean": reduce_mean,
+    #"GRU": gru,
+    #"LSTM": lstm,
 }
