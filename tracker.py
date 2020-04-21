@@ -1,7 +1,7 @@
 from .hooks import *
 from .util.misc import *
 from onnx import numpy_helper
-from onnx import helper
+from onnx import helper, AttributeProto
 import numpy as np
 import os
 import csv
@@ -210,7 +210,10 @@ class ModelStats(object):
         io = self.get_io_identifier(n_out, False)
         _outputs.append(io)
       for a in n.attribute:
-        _attributes[a.name] = helper.get_attribute_value(a)
+        if a.type == AttributeProto.TENSOR:
+          _attributes["t"] = a
+        else:
+          _attributes[a.name] = helper.get_attribute_value(a)
       
       # the _outputs, will get updated!
       # meaning the stored node io in self.model_node_io will get updated.

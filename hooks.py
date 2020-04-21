@@ -919,13 +919,12 @@ def constant(inputs, outputs, attributes):
     # Do check your code, why it is using constant.
     # TODO: Not sure whether we should validate the data_type.
     assert len(inputs) == 0, f"Constant should not have taken inputs, got {inputs}"
-    outputs[0]["data"]["shape"] = [1]
-    dtype = attributes["value"].data_type
-    b = None
-    if dtype == onnx.TensorProto.DataType.INT64:
-        # NOTE: onnx is little endian serialized 
-        b = int.from_bytes(attributes['value'].raw_data, byteorder='little', signed=True)
-        outputs[0]["data"]["raw_data"] = b
+
+    tensorPro = attributes.get("t", None)
+    assert tensorPro is not None, f"Expect tensor t get passed in, got {attributes}"
+    tensor = numpy_helper.to_array(tensorPro.t)
+    outputs[0]["data"]["raw_data"] = tensor
+    outputs[0]["data"]["shape"] = [1] if len(tensor.shape) == 0 else list(tensor.shape)
     return {
         "operations": {
             "flops": 0,
@@ -1104,6 +1103,41 @@ def reduce_mean(inputs, outputs, attributes):
         }
     }
 
+def split(inputs, outputs, attributes):
+    axis = attributes.get("axis", 0)
+    splits = attributes.get("split", None)
+    assert splits is not None, f"Split must not be none in attributes, got {attributes}"
+    a = inputs[0]["data"]["shape"]
+    if a == None or len(a) < 1:
+        a = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
+        if a == None:
+            raise Exception("input for split operation not specified!")
+    a = np.zeros(a)
+    currentsum = splits[0]
+    for i in range(1, len(splits)):
+        splits[i] = currentsum+splits[i]
+        currentsum = splits[i]
+    outs = np.split(a, splits, axis=axis)
+    for i, o in enumerate(outs):
+        if o.shape[axis] == 0:
+            continue
+        outputs[i]["data"]["shape"] = list(o.shape)
+    return {
+        "operations": {
+            "flops": 0,
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        # TODO: when you split, it might have created new set of variables
+        "memory": {
+            "parameters": 0,
+            "activations": np.prod(a.shape), 
+            "other_memory": 0
+        }
+    }
 
 hook = {
     "BatchNormalization": batch_norm,
@@ -1130,6 +1164,7 @@ hook = {
     "Unsqueeze": unsqueeze,
     "Gemm": gemm,
     "ReduceMean": reduce_mean,
+    "Split": split,
     #"GRU": gru,
     #"LSTM": lstm,
 }
