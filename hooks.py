@@ -359,18 +359,44 @@ def pad(inputs, outputs, attributes):
             raise Exception("1st input for Pad operation not specified!")
 
     out_shape = []
-    # pads are in the form of [dim1_begin, ..., dimN_begin, dim1_end, ..., dimN_end]
-    pads = numpy_helper.to_array(inputs[1]["data"]["identifier"])
-    # number of dimensions in input
-    num_inp_dims = len(input_shape)
-    # split pads into respective begins and ends for each dimension
-    pads_begins = pads[:num_inp_dims]
-    pads_ends = pads[num_inp_dims:]
-    # for each dimension, add begin+end to size of the dimension
-    for i in range(0, num_inp_dims):
-        both = pads_begins[i] + pads_ends[i]
-        out_shape.append(input_shape[i] + both)
-    outputs[0]["data"]["shape"] = out_shape
+    mode = attributes.get("mode", "")
+    if len(inputs) == 1:
+        mode = mode.decode("UTF-8")
+        a = np.zeros(input_shape)
+        # re-order to np.pad accepted order ((x1_begin, x1_end), (x2_begin, x2_end), ...)
+        raw_pads = attributes.get("pads", [])
+        assert len(raw_pads) > 0, f"expect pads length greater than 0, got {attributes}"
+        input_rank = a.ndim
+        if input_rank * 2 != len(raw_pads):
+            raise Exception('The number of elements in raw_pads should be 2 * data_rank')
+
+        # re-order to np.pad accepted order ((x1_begin, x1_end), (x2_begin, x2_end), ...)
+        pad_width = ()
+        for i in range(int(len(raw_pads) / 2)):
+            pad_width += ((raw_pads[i], raw_pads[i + input_rank])),  # type: ignore
+        constant_values = attributes.get("value", 0.0)
+        a = np.pad(
+            a,
+            pad_width=pad_width,
+            mode=mode,
+            constant_values=constant_values,
+        )
+        outputs[0]["data"]["shape"] = list(a.shape)
+        mem_activation = np.prod(a.shape)
+    else:
+        # pads are in the form of [dim1_begin, ..., dimN_begin, dim1_end, ..., dimN_end]
+        pads = numpy_helper.to_array(inputs[1]["data"]["identifier"])
+        # number of dimensions in input
+        num_inp_dims = len(input_shape)
+        # split pads into respective begins and ends for each dimension
+        pads_begins = pads[:num_inp_dims]
+        pads_ends = pads[num_inp_dims:]
+        # for each dimension, add begin+end to size of the dimension
+        for i in range(0, num_inp_dims):
+            both = pads_begins[i] + pads_ends[i]
+            out_shape.append(input_shape[i] + both)
+        outputs[0]["data"]["shape"] = out_shape
+        mem_activation = (np.prod(out_shape) - np.prod(input_shape))
     return {
         "operations": {
             "flops": 0,
@@ -383,7 +409,7 @@ def pad(inputs, outputs, attributes):
         "memory": {
             "parameters": 0,
             "activations": 0,
-            "other_memory": (np.prod(out_shape) - np.prod(input_shape))
+            "other_memory": mem_activation
         }
     }
 
@@ -513,7 +539,7 @@ def relu(inputs, outputs, attributes):
 def concat(inputs, outputs, attributes):
     mem_activations = 0
     inputs_shapes = []
-    # # collect input dimensions
+    # collect input dimensions
     for i in range(len(inputs)):
         id = inputs[i]["data"]["shape"]
         if id == None or len(id) < 1:
@@ -523,30 +549,13 @@ def concat(inputs, outputs, attributes):
         else:
             inputs_shapes.append(id)
 
+    a = []
+    for i in inputs_shapes:
+        a.append(np.zeros(i))
     # check on which axis to concatenate
-    axis = attributes["axis"] if "axis" in attributes else 1
-
-    # check if dimensions after the axis are the same
-    for i in range(len(inputs_shapes)):
-        for j in range(len(inputs_shapes[i][axis + 1:])):
-            if i == 0:
-                continue
-            elif inputs_shapes[i][axis + 1:][j] != inputs_shapes[i - 1][axis + 1:][j]:
-                pprint(inputs)
-                raise Exception("Not matching dimensions after the Concat axis!")
-        
-        for j in range(len(inputs_shapes[i][:axis])):
-            if inputs_shapes[i][j] != inputs_shapes[i - 1][j]:
-                raise Exception("Not matching dimensions before the Concat axis!")
-    
-    sum = 0
-    for i in range(len(inputs_shapes)):
-        sum += inputs_shapes[i][axis]
-
-    output_dims = inputs_shapes[0]
-    output_dims[axis] = sum
-    
-    outputs[0]["data"]["shape"] = output_dims
+    axis = attributes.get("axis", 1)
+    a = np.concatenate(a, axis=axis)
+    outputs[0]["data"]["shape"] = list(a.shape)
 
     # If both inputs have raw_data
     # we do the actual concat on the data too.
@@ -556,8 +565,7 @@ def concat(inputs, outputs, attributes):
             inputs_raw.append(i["data"]["raw_data"])
     if len(inputs_raw) > 0 :
         outputs[0]["data"]["raw_data"] = np.concatenate(inputs_raw, axis)
-
-    mem_activations = np.prod(output_dims)
+    mem_activations = np.prod(a.shape)
     return {
         "operations": {
             "flops": 0,
@@ -627,8 +635,14 @@ def mul(inputs, outputs, attributes):
         a = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
         if a == None:
             raise Exception("1st input for Mul operation not specified!")
-
-    b = inputs[1]["data"]["identifier"].dims
+    
+    iden = inputs[1]["data"].get("identifier", None)
+    if iden == None:
+        b = inputs[1]["data"].get("shape", None)
+    else:
+        b = iden.dims
+    
+    assert b is not None, f"Expect inputs [1] at has either identifer or shape, got {inputs[1]}"
 
     max_dims = max([a, b], key=len)
     min_dims = min([a, b], key=len)
@@ -768,21 +782,34 @@ def _slice(inputs, outputs, attributes):
         if a == None:
             raise Exception("1st input for Softmax operation not specified!")
 
-    starts = numpy_helper.to_array(inputs[1]["data"]["identifier"]).tolist() if inputs[1]["data"]["identifier"] != None else None
-    if starts == None:
-        raise Exception("2nd input for Slice operation not specified!")
+    if len(inputs) > 1:
+        starts = numpy_helper.to_array(inputs[1]["data"]["identifier"]).tolist() if inputs[1]["data"]["identifier"] != None else None
+        if starts == None:
+            raise Exception("2nd input for Slice operation not specified!")
 
-    ends = numpy_helper.to_array(inputs[2]["data"]["identifier"]).tolist() if inputs[2]["data"]["identifier"] != None else None
-    if ends == None:
-        raise Exception("3nd input for Slice operation not specified!")
-    
-    steps = [1 for x in range(len(starts))]
-    if len(inputs) > 4 and inputs[4]["data"]["identifier"] != None:
-        steps = numpy_helper.to_array(inputs[4]["data"]["identifier"]).tolist()
+        ends = numpy_helper.to_array(inputs[2]["data"]["identifier"]).tolist() if inputs[2]["data"]["identifier"] != None else None
+        if ends == None:
+            raise Exception("3nd input for Slice operation not specified!")
+        
+        steps = [1 for x in range(len(starts))]
+        if len(inputs) > 4 and inputs[4]["data"]["identifier"] != None:
+            steps = numpy_helper.to_array(inputs[4]["data"]["identifier"]).tolist()
 
-    axes = [x for x in range(len(a))]
-    if len(inputs) > 3 and inputs[3]["data"]["identifier"] != None:
-        axes = numpy_helper.to_array(inputs[3]["data"]["identifier"]).tolist()
+        axes = [x for x in range(len(a))]
+        if len(inputs) > 3 and inputs[3]["data"]["identifier"] != None:
+            axes = numpy_helper.to_array(inputs[3]["data"]["identifier"]).tolist()
+    else:
+        # rnn slice from pytorch.
+        starts = attributes.get("starts", [])
+        assert len(starts) > 0, f"Either inputs should be supplied or attributes[start], got {inputs}, {attributes}"
+
+        ends = attributes.get("ends", [])
+        assert len(ends) > 0, f"Either inputs should be supplied or attributes[end], got {inputs}, {attributes}"
+
+        steps = [1 for x in range(len(starts))]
+
+        axes = attributes.get("axes", [])
+        assert len(axes) > 0, f"Either inputs should be supplied or attributes[axes], got {inputs}, {attributes}"
 
     # prepare input data shape
     x = np.zeros(a)
@@ -799,7 +826,6 @@ def _slice(inputs, outputs, attributes):
 
     ix = [indices.get(dim, slice(None)) for dim in range(x.ndim)]
     sliced = x[tuple(ix)]
-
     outputs[0]["data"]["shape"] = list(sliced.shape)
 
     mem_activations = np.prod(list(sliced.shape))
@@ -946,18 +972,35 @@ def gather(inputs, outputs, attributes):
     # pick axises of elements out.
     # i.e. from inputs[0] pick inputs[1]
     assert len(inputs) > 1, f"Must have more than 1 input, got {inputs}"
-    assert attributes.get("axis", None) is not None, f"Must have axis, got {attributes}"
-    # TODO: currently this assume its just picking out value from the shape.
-    # it is very possible that some usage of gather is to pick data out instead.
-    a = np.array(inputs[0]["data"]["shape"])
-    b = inputs[1]["data"]["raw_data"]
     axis = attributes.get("axis", None)
-    c = np.take(a, b, axis=axis)
-    if isinstance(c, np.ndarray):
-        outputs[0]["data"]["shape"] = list(c.shape)
+    input_shape = inputs[0]["data"]["shape"]
+    
+    if len(input_shape) == 0:
+        # check the dims
+        iden = inputs[0]["data"].get("identifier", None)
+        assert iden is not None, f"Expect either identifier or shape is present, got {inputs[0]}"
+        input_shape = iden.dims
+
+    b = None
+    if axis is None:
+        assert inputs[1]["data"].get("identifier", None) is not None, f"Must have either axis in attributes or have identifier passed in {attributes}, {inputs[1]}"
+        # embeddings only.
+        if "embedding" in inputs[0]["name"]:
+            b = inputs[1]["data"]["shape"] + input_shape[1:]
+            outputs[0]["data"]["shape"] = b
     else:
-        outputs[0]["data"]["shape"] = [1]
-    outputs[0]["data"]["raw_data"] = c
+        assert inputs[1]["data"].get("raw_data", None) is not None, f"Must have raw_data if axis is specified, got {inputs[1]}" 
+        b = np.array(inputs[1]["data"]["raw_data"])
+        # TODO: currently this assume its just picking out value from the shape.
+        # it is very possible that some usage of gather is to pick data out instead.
+        a = np.array(input_shape)
+        c = np.take(a, b, axis=axis)
+        if isinstance(c, np.ndarray):
+            outputs[0]["data"]["shape"] = list(c.shape)
+        else:
+            outputs[0]["data"]["shape"] = [1]
+        outputs[0]["data"]["raw_data"] = c
+
     other_memory = np.prod(outputs[0]["data"]["shape"])
     return {
         "operations": {
@@ -978,11 +1021,48 @@ def gather(inputs, outputs, attributes):
 def unsqueeze(inputs, outputs, attributes):
     axis_to_expand = attributes.get("axes", None)
     assert axis_to_expand is not None, f"Axes should be in attributes, got {attributes}"
-    a = inputs[0]["data"]["raw_data"]
+    raw = inputs[0]["data"].get("raw_data", None)
+    a = None
+    if raw is None:
+        a = np.zeros(inputs[0]["data"]["shape"])
+    else:
+        a = inputs[0]["data"]["raw_data"]
+
     for i in axis_to_expand:
         a = np.expand_dims(a, axis=i)
     outputs[0]["data"]["shape"] = list(a.shape)
-    outputs[0]["data"]["raw_data"] = a
+    if raw is not None:
+        outputs[0]["data"]["raw_data"] = a
+    return {
+        "operations": {
+            "flops": 0,
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": 0,
+            "activations": 0,
+            "other_memory": np.prod(a.shape)
+        }
+    }
+
+def squeeze(inputs, outputs, attributes):
+    axis_to_squeeze = attributes.get("axes", None)
+    assert axis_to_squeeze is not None, f"Axes should be in attribute, got {attributes}"
+    raw = inputs[0]["data"].get("raw_data", None)
+    a = None
+    if raw is None:
+        a = np.zeros(inputs[0]["data"]["shape"])
+    else:
+        a = inputs[0]["data"]["raw_data"]
+    for i in axis_to_squeeze:
+        a = np.squeeze(a, axis=i)
+    outputs[0]["data"]["shape"] = list(a.shape)
+    if raw is not None:
+        outputs[0]["data"]["raw_data"] = a
     return {
         "operations": {
             "flops": 0,
@@ -1139,6 +1219,219 @@ def split(inputs, outputs, attributes):
         }
     }
 
+def div(inputs, outputs, attributes):
+    a = inputs[0]["data"]["shape"]
+    if a == None or len(a) < 1:
+        a = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
+        if a == None:
+            raise Exception("input for Div operation not specified!")
+    
+    # since its an elementwise div operation, should return the same shape.
+    # even if it broadcast,
+    assert len(inputs) > 1, f"Expect two inputs, got {inputs}."
+    b = inputs[1]["data"]["shape"]
+    a = np.zeros(a)
+    b = np.ones(b)
+    z = a/b
+
+    outputs[0]["data"]["shape"] = list(z.shape)
+    return {
+        "operations": {
+            "flops": np.prod(z.shape),
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": np.prod(z.shape),
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": 0,
+            "activations": np.prod(z.shape), 
+            "other_memory": 0
+        }
+    }
+
+def lstm(inputs, outputs, attributes):
+    assert len(inputs) >= 3, f"Must have required input: x, w, r. Got {inputs}"
+    x = inputs[0]
+    x = np.ones(x["data"]["shape"])
+    w = inputs[1]
+    w = np.ones(w["data"]["shape"])
+    r = inputs[2]
+    r = np.ones(r["data"]["shape"])
+    b = inputs[3]
+    b = np.zeros(b["data"]["shape"])
+    p = inputs[4]
+    hidden_size = attributes.get("hidden_size", None)
+    assert len(attributes.items()) == 1, f"Not sure whether we need other attributes here, hence the assertion for improvement later."
+    p = np.ones((1, 3 * hidden_size))
+    c = inputs[5]
+    c_0 = np.zeros(c["data"]["shape"])
+    h = inputs[6]
+    h_0 = np.zeros(h["data"]["shape"])
+
+    num_direction = w.shape[0]
+    if num_direction == 1:
+        w = np.squeeze(w, axis=0)
+        r = np.squeeze(r, axis=0)
+        b = np.squeeze(b, axis=0)
+        p = np.squeeze(p, axis=0)
+        c = np.squeeze(c, axis=0)
+        h = np.squeeze(h, axis=0)
+
+        batch_size = x.shape[1]
+    
+    def f_fn(x):
+        return 1 / (1 + np.exp(-x))
+    
+    def g_fn(x):
+        return np.tanh(x)
+    
+    def h_fn(x):
+        return np.tanh(x)
+    
+    comp_flops = 0
+
+    [p_i, p_o, p_f] = np.split(p, 3)
+    h_list = []
+    h_t = h_0
+    c_t = c_0
+    for x_split in np.split(x, x.shape[0], axis=0):
+        gates = np.dot(x_split, np.transpose(w)) + np.dot(h_t, np.transpose(r)) + np.add(*np.split(b, 2))
+        comp_flops += 2 * np.prod(x_split.shape) * w.shape[0]
+        comp_flops += 2 * np.prod(h_t.shape) * r.shape[0]
+        comp_flops += 2 * np.prod(b.shape)
+        i, o, f_cell, c = np.split(gates, 4, -1)
+        i = f_fn(i+p_i+c_t)
+        comp_flops += np.prod(i.shape)
+        f_cell = f_fn(f_cell+p_f+c_t)
+        comp_flops += np.prod(f_cell.shape)
+        c = g_fn(c)
+        comp_flops += np.prod(c.shape)
+        C = f_cell*c_t + i*c
+        comp_flops += np.prod(C.shape)
+        o = f_fn(o+ p_o * C)
+        comp_flops += np.prod(o.shape)
+        H = o*h_fn(C)
+        comp_flops += np.prod(H.shape)
+        h_list.append(H)
+        h_t = H
+        c_t = C
+    concatenated = np.concatenate(h_list)
+    if num_direction == 1:
+        out = np.expand_dims(concatenated, 1)
+
+    outputs[0]["data"]["shape"] = list(out.shape)
+    outputs[1]["data"]["shape"] = list(h_t.shape)
+    outputs[2]["data"]["shape"] = list(c_t.shape)
+    activation = np.prod(out.shape)
+    parameters = np.prod(w.shape) + np.prod(r.shape) + np.prod(b.shape)
+    del gates, i, o, f_cell, c, h_list, out, concatenated, x, w ,r 
+    return {
+        "operations": {
+            "flops": comp_flops,
+            "multiply_adds": comp_flops//2,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": parameters,
+            "activations": activation, 
+            "other_memory": 0
+        }
+    }
+
+def gru(inputs, outputs, attributes):
+    assert len(inputs) >= 3 , f"Required at least three inputs: X, W, R.  Got {inputs}"
+    x = inputs[0]
+    x = np.ones(x["data"]["shape"])
+    w = inputs[1]
+    w = np.ones(w["data"]["shape"])
+    r = inputs[2]
+    r = np.ones(r["data"]["shape"])
+    b = inputs[3]
+    b = np.zeros(b["data"]["shape"])
+    # NOTE: not sure what is fourth.
+    what_is_fourth = inputs[4]
+    h_0 = inputs[5]
+    h_0 = np.zeros(h_0["data"]["shape"])
+
+    assert len(attributes.items()) >= 2, f"Expect to have 2 attributes: hidden and linear before set. got {attributes}"
+    hidden_size = attributes.get("hidden_size", None)
+    linear_before_set = attributes.get("linear_before_reset", 0)
+
+    num_direction = w.shape[0]
+    batch_size = x.shape[1]
+    if num_direction != 1:
+        raise NotImplementedError()
+
+    w = np.squeeze(w, axis=0)
+    r = np.squeeze(r, axis=0)
+    b = np.squeeze(b, axis=0)
+    h_0 = np.squeeze(h_0, axis=0)
+
+    def f_fn(x):
+        return 1/(1+np.exp(-x))
+    
+    def g_fn(x):
+        return np.tanh(x)
+    
+    h_list = []
+    [w_z, w_r, w_h] = np.split(w, 3)
+    [r_z, r_r, r_h] = np.split(r, 3)
+    [w_bz, w_br, w_bh, r_bz, r_br, r_bh] = np.split(b, 6)
+    gates_w = np.transpose(np.concatenate((w_z, w_r)))
+    gates_r = np.transpose(np.concatenate((r_z, r_r)))
+    gates_b = np.add(np.concatenate((w_bz, w_br)), np.concatenate((r_bz, r_br)))
+    comp_flops = 0
+    h_t = h_0
+    for x_t in np.split(x, x.shape[0], axis=0):
+        gates = np.dot(x_t, gates_w) + np.dot(h_t, gates_r) + gates_b
+        comp_flops += 2 * np.prod(x_t.shape) * gates_w.shape[1]
+        comp_flops += 2 * np.prod(h_t.shape) * gates_r.shape[1] + gates_b.shape
+        z, r = np.split(gates, 2, -1)
+        z = f_fn(z)
+        comp_flops += np.prod(z.shape)
+        r = f_fn(r)
+        comp_flops += np.prod(r.shape)
+        h_default = g_fn(np.dot(x_t, np.transpose(w_h)) + np.dot(r*h_t, np.transpose(r_h)) + w_bh + r_bh)
+        comp_flops += 2 * np.prod(x_t.shape) * w_h.shape[0]
+        comp_flops += 2 * np.prod(r.shape) * r_h.shape[0]
+        h_linear = g_fn(np.dot(x_t, np.transpose(w_h)) + r * (np.dot(h_t, np.transpose(r_h)) + r_bh) + w_bh)
+        comp_flops += 2 * np.prod(x_t.shape) * w_h.shape[0]
+        comp_flops += 2 * np.prod(h_t.shape) * r_h.shape[0]
+        comp_flops += 3 * np.prod(r.shape)
+        h_ = h_linear if linear_before_set else h_default
+        H = (1-z) * h_ + z*h_t
+        h_list.append(H)
+        h_t = H
+    concatenated = np.concatenate(h_list)
+    if num_direction == 1:
+        out = np.expand_dims(concatenated, 1)
+
+    outputs[0]["data"]["shape"] = list(out.shape)
+    outputs[1]["data"]["shape"] = list(h_t.shape)
+    activation = np.prod(out.shape)
+    parameters = np.prod(w.shape) + np.prod(r.shape) + np.prod(b.shape)
+    del gates, h_list, out, concatenated, x, w ,r 
+    return {
+        "operations": {
+            "flops": int(comp_flops),
+            "multiply_adds": int(comp_flops)//2,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": parameters,
+            "activations": activation, 
+            "other_memory": 0
+        }
+    }
+
 hook = {
     "BatchNormalization": batch_norm,
     "Clip": clip,
@@ -1165,6 +1458,8 @@ hook = {
     "Gemm": gemm,
     "ReduceMean": reduce_mean,
     "Split": split,
-    #"GRU": gru,
-    #"LSTM": lstm,
+    "Div": div,
+    "Squeeze": squeeze,
+    "LSTM": lstm,
+    "GRU": gru,
 }

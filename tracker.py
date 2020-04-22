@@ -1,7 +1,7 @@
 from .hooks import *
 from .util.misc import *
 from onnx import numpy_helper
-from onnx import helper, AttributeProto
+from onnx import helper, AttributeProto, TensorProto
 import numpy as np
 import os
 import csv
@@ -165,8 +165,11 @@ class ModelStats(object):
   def get_io_identifier(self, n_io, is_input=True):
     io = self.model_node_io[n_io]
     check_dict = self.model_inputs if is_input else self.model_outputs
-    if io["data"]["identifier"] not in check_dict:
-      io["data"]["identifier"] = self._get_identifier(n_io)
+    # NOTE: this io identifier value might not be hashable.
+    iden = io["data"].get("identifier", None)
+    if iden is None or isinstance(iden, str):
+      if io["data"]["identifier"] not in check_dict:
+        io["data"]["identifier"] = self._get_identifier(n_io)
     return io
 
   # retrieves identifier by name
@@ -188,12 +191,11 @@ class ModelStats(object):
   # adds towards accumulated footprint for an operation
   def add_footprint(self, op_type, footprint):
     footprint["op_type"] = op_type
-    # multiply memory footprint by 4 for float-byte size
+    # multiply memory footprint by 4 for float32-byte size
     footprint["memory"]["activations"] *= 4
     footprint["memory"]["parameters"] *= 4
     footprint["memory"]["other_memory"] *= 4
     self.layer_statistics.append(footprint)
-
 
   def count(self):
     for n in self.model.graph.node:
