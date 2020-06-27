@@ -1256,11 +1256,12 @@ def lstm(inputs, outputs, attributes):
     x = inputs[0]
     x = np.ones(x["data"]["shape"])
     w = inputs[1]
-    w = np.ones(w["data"]["shape"])
+    w = convertNumpyElseOnes(w, "model_initializer", "identifier")
     r = inputs[2]
-    r = np.ones(r["data"]["shape"])
+    r = convertNumpyElseOnes(r, "model_initializer", "identifier")
+
     b = inputs[3]
-    b = np.zeros(b["data"]["shape"])
+    b = convertNumpyElseOnes(b, "model_initializer", "identifier")
     p = inputs[4]
     hidden_size = attributes.get("hidden_size", None)
     assert len(attributes.items()) == 1, f"Not sure whether we need other attributes here, hence the assertion for improvement later."
@@ -1290,7 +1291,7 @@ def lstm(inputs, outputs, attributes):
     def h_fn(x):
         return np.tanh(x)
     
-    comp_flops = 0
+    comp_flops = 0.0
 
     [p_i, p_o, p_f] = np.split(p, 3)
     h_list = []
