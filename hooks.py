@@ -1343,16 +1343,23 @@ def lstm(inputs, outputs, attributes):
         }
     }
 
+def convertNumpyElseOnes(inputs, op_type, at):
+    if inputs["type"] == op_type:
+        return numpy_helper.to_array(inputs["data"][at])
+    else:
+        return np.ones(inputs["data"]["shape"])
+
 def gru(inputs, outputs, attributes):
     assert len(inputs) >= 3 , f"Required at least three inputs: X, W, R.  Got {inputs}"
     x = inputs[0]
     x = np.ones(x["data"]["shape"])
     w = inputs[1]
-    w = np.ones(w["data"]["shape"])
+    w = convertNumpyElseOnes(w, "model_initializer", "identifier")
     r = inputs[2]
-    r = np.ones(r["data"]["shape"])
+    r = convertNumpyElseOnes(r, "model_initializer", "identifier")
+
     b = inputs[3]
-    b = np.zeros(b["data"]["shape"])
+    b = convertNumpyElseOnes(b, "model_initializer", "identifier")
     # NOTE: not sure what is fourth.
     what_is_fourth = inputs[4]
     h_0 = inputs[5]
@@ -1385,7 +1392,7 @@ def gru(inputs, outputs, attributes):
     gates_w = np.transpose(np.concatenate((w_z, w_r)))
     gates_r = np.transpose(np.concatenate((r_z, r_r)))
     gates_b = np.add(np.concatenate((w_bz, w_br)), np.concatenate((r_bz, r_br)))
-    comp_flops = 0
+    comp_flops = 0.0
     h_t = h_0
     for x_t in np.split(x, x.shape[0], axis=0):
         gates = np.dot(x_t, gates_w) + np.dot(h_t, gates_r) + gates_b
