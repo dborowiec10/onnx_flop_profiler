@@ -425,10 +425,10 @@ def reshape(inputs, outputs, attributes):
     alloc_input = np.zeros(input_dims)
     if inputs[1]["data"].get("identifier") is not None:
         # NOTE: only model input/output tensor will follow this path.
-        reshape = numpy_helper.to_array(inputs[1]["data"]["identifier"]).tolist()
-        for i in range(len(reshape)):
-            if reshape[i] == 0:
-                reshape[i] = input_dims[i]
+        reshaped = numpy_helper.to_array(inputs[1]["data"]["identifier"]).tolist()
+        for i in range(len(reshaped)):
+            if reshaped[i] == 0:
+                reshaped[i] = input_dims[i]
     else:
         # NOTE: io node will follow this path.
         if inputs[1]["data"].get("raw_data", None) is not None:
@@ -772,6 +772,64 @@ def softmax(inputs, outputs, attributes):
         }
     }
 
+def elu(inputs, outputs, attributes):
+    a = inputs[0]["data"]["shape"]
+    if a == None or len(a) < 1:
+        a = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
+        if a == None:
+            raise Exception("1st input for Elu operation not specified!")
+    alpha = attributes.get("alpha", None)
+    if alpha == None:
+        alpha = 1.0
+
+    x = np.random.randn(*a).astype(np.float32)
+    y = np.clip(x, 0, np.inf) + (np.exp(np.clip(x, -np.inf, 0)) - 1) * alpha
+    outputs[0]["data"]["shape"] = list(y.shape)
+    
+    return {
+        "operations": {
+            "flops": 0,
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": 0,
+            "activations": np.prod(list(y.shape)),
+            "other_memory": 0
+        }
+    }
+    
+def sigmoid(inputs, outputs, attributes):
+    a = inputs[0]["data"]["shape"]
+    if a == None or len(a) < 1:
+        a = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
+        if a == None:
+            raise Exception("1st input for Sigmoid operation not specified!")
+
+    x = np.random.randn(*a).astype(np.float32)
+    y = 1.0 / (1.0 + np.exp(np.negative(x)))
+    outputs[0]["data"]["shape"] = list(y.shape)
+
+    return {
+        "operations": {
+            "flops": 0,
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": 0,
+            "activations": np.prod(list(y.shape)),
+            "other_memory": 0
+        }
+    }
+
+
 def _slice(inputs, outputs, attributes):
     mem_activations = 0
 
@@ -780,7 +838,7 @@ def _slice(inputs, outputs, attributes):
     if a == None or len(a) < 1:
         a = inputs[0]["data"]["identifier"].dims if inputs[0]["data"]["identifier"] != None else None
         if a == None:
-            raise Exception("1st input for Softmax operation not specified!")
+            raise Exception("1st input for Slice operation not specified!")
 
     if len(inputs) > 1:
         starts = numpy_helper.to_array(inputs[1]["data"]["identifier"]).tolist() if inputs[1]["data"]["identifier"] != None else None
@@ -968,40 +1026,12 @@ def constant(inputs, outputs, attributes):
     }
 
 def gather(inputs, outputs, attributes):
-    # most usage of gather is to 
-    # pick axises of elements out.
-    # i.e. from inputs[0] pick inputs[1]
-    assert len(inputs) > 1, f"Must have more than 1 input, got {inputs}"
+    assert len(inputs) == 2, f"Must have more than 1 input, got {inputs}"
     axis = attributes.get("axis", None)
-    input_shape = inputs[0]["data"]["shape"]
-    
-    if len(input_shape) == 0:
-        # check the dims
-        iden = inputs[0]["data"].get("identifier", None)
-        assert iden is not None, f"Expect either identifier or shape is present, got {inputs[0]}"
-        input_shape = iden.dims
-
-    b = None
-    if axis is None:
-        assert inputs[1]["data"].get("identifier", None) is not None, f"Must have either axis in attributes or have identifier passed in {attributes}, {inputs[1]}"
-        # embeddings only.
-        if "embedding" in inputs[0]["name"]:
-            b = inputs[1]["data"]["shape"] + input_shape[1:]
-            outputs[0]["data"]["shape"] = b
-    else:
-        assert inputs[1]["data"].get("raw_data", None) is not None, f"Must have raw_data if axis is specified, got {inputs[1]}" 
-        b = np.array(inputs[1]["data"]["raw_data"])
-        # TODO: currently this assume its just picking out value from the shape.
-        # it is very possible that some usage of gather is to pick data out instead.
-        a = np.array(input_shape)
-        c = np.take(a, b, axis=axis)
-        if isinstance(c, np.ndarray):
-            outputs[0]["data"]["shape"] = list(c.shape)
-        else:
-            outputs[0]["data"]["shape"] = [1]
-        outputs[0]["data"]["raw_data"] = c
-
-    other_memory = np.prod(outputs[0]["data"]["shape"])
+    a = np.zeros(inputs[0]["data"]["shape"]).astype(np.float32)
+    b = np.array(inputs[1]["data"]["raw_data"])
+    c = np.take(a, b, axis=axis)
+    outputs[0]["data"]["shape"] = list(c.shape)
     return {
         "operations": {
             "flops": 0,
@@ -1014,7 +1044,7 @@ def gather(inputs, outputs, attributes):
         "memory": {
             "parameters": 0,
             "activations": 0,
-            "other_memory": other_memory
+            "other_memory": np.prod(outputs[0]["data"]["shape"])
         }
     }
 
@@ -1251,17 +1281,34 @@ def div(inputs, outputs, attributes):
         }
     }
 
+def cast(inputs, outputs, attributes):
+    outputs[0]["data"]["shape"] = inputs[0]["data"]["shape"]
+    return {
+        "operations": {
+            "flops": 0,
+            "multiply_adds": 0,
+            "comparisons": 0,
+            "additions": 0,
+            "divisions": 0,
+            "exponentials": 0
+        },
+        "memory": {
+            "parameters": 0,
+            "activations": 0, 
+            "other_memory": 0
+        }
+    }
+
 def lstm(inputs, outputs, attributes):
     assert len(inputs) >= 3, f"Must have required input: x, w, r. Got {inputs}"
     x = inputs[0]
     x = np.ones(x["data"]["shape"])
     w = inputs[1]
-    w = convertNumpyElseOnes(w, "model_initializer", "identifier")
+    w = np.ones(w["data"]["shape"])
     r = inputs[2]
-    r = convertNumpyElseOnes(r, "model_initializer", "identifier")
-
+    r = np.ones(r["data"]["shape"])
     b = inputs[3]
-    b = convertNumpyElseOnes(b, "model_initializer", "identifier")
+    b = np.zeros(b["data"]["shape"])
     p = inputs[4]
     hidden_size = attributes.get("hidden_size", None)
     assert len(attributes.items()) == 1, f"Not sure whether we need other attributes here, hence the assertion for improvement later."
@@ -1291,7 +1338,7 @@ def lstm(inputs, outputs, attributes):
     def h_fn(x):
         return np.tanh(x)
     
-    comp_flops = 0.0
+    comp_flops = 0
 
     [p_i, p_o, p_f] = np.split(p, 3)
     h_list = []
@@ -1344,23 +1391,16 @@ def lstm(inputs, outputs, attributes):
         }
     }
 
-def convertNumpyElseOnes(inputs, op_type, at):
-    if inputs["type"] == op_type:
-        return numpy_helper.to_array(inputs["data"][at])
-    else:
-        return np.ones(inputs["data"]["shape"])
-
 def gru(inputs, outputs, attributes):
     assert len(inputs) >= 3 , f"Required at least three inputs: X, W, R.  Got {inputs}"
     x = inputs[0]
     x = np.ones(x["data"]["shape"])
     w = inputs[1]
-    w = convertNumpyElseOnes(w, "model_initializer", "identifier")
+    w = np.ones(w["data"]["shape"])
     r = inputs[2]
-    r = convertNumpyElseOnes(r, "model_initializer", "identifier")
-
+    r = np.ones(r["data"]["shape"])
     b = inputs[3]
-    b = convertNumpyElseOnes(b, "model_initializer", "identifier")
+    b = np.zeros(b["data"]["shape"])
     # NOTE: not sure what is fourth.
     what_is_fourth = inputs[4]
     h_0 = inputs[5]
@@ -1393,7 +1433,7 @@ def gru(inputs, outputs, attributes):
     gates_w = np.transpose(np.concatenate((w_z, w_r)))
     gates_r = np.transpose(np.concatenate((r_z, r_r)))
     gates_b = np.add(np.concatenate((w_bz, w_br)), np.concatenate((r_bz, r_br)))
-    comp_flops = 0.0
+    comp_flops = 0
     h_t = h_0
     for x_t in np.split(x, x.shape[0], axis=0):
         gates = np.dot(x_t, gates_w) + np.dot(h_t, gates_r) + gates_b
@@ -1443,7 +1483,9 @@ def gru(inputs, outputs, attributes):
 hook = {
     "BatchNormalization": batch_norm,
     "Clip": clip,
+    "Cast": cast,
     "Conv": conv,
+    "Elu": elu,
     "GlobalAveragePool": global_avg_pool,
     "AveragePool": avg_pool,
     "MaxPool": max_pool,
@@ -1468,6 +1510,7 @@ hook = {
     "Split": split,
     "Div": div,
     "Squeeze": squeeze,
+    "Sigmoid": sigmoid,
     "LSTM": lstm,
     "GRU": gru,
 }
